@@ -1,0 +1,33 @@
+
+# client test
+--next
+-js ../www/.pageamptest/client/bin/test.js
+-cp ext
+-cp src
+-cp test
+-D test
+-main pageamp.test.PageAmpSuite
+-lib htmlparser
+-lib hscript
+-D client
+-debug
+-D source-map-content
+
+# php test
+--next
+-php ../www/.pageamptest/php
+-cp ext
+-cp src
+-cp test
+-D test
+-main pageamp.test.PageAmpSuite
+-lib htmlparser
+-lib hscript
+-D server
+
+# test page collapsible listss
+--next
+-js ../www/.pageamptest/bin/testpage.js
+-cp test
+-main pageamp.util.TestPage
+-D client
