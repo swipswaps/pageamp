@@ -27,10 +27,12 @@ It allows you to:
 
    * server-side rendering is bit of a gimmick, and how many projects are you actually [hosting on NodeJS](https://w3techs.com/technologies/overview/programming_language/all) anyway?
    * they override the declarative HTML with the procedural JavaScript — only to then having to mitigate that with yet another language like [JSX](https://reactjs.org/docs/introducing-jsx.html)
-   * _PageAmp keeps it straight by making HTML reactive itself, and it works in the server out of the box_
+
+> PageAmp keeps it straight by making HTML reactive itself, and it works in the server out of the box
 
 2. Server-side templating: each server technology has its own set, but none can make the client an integral part of their design:
 
    * in most, output pages are static by design: adding dynamic behaviour and, crucially, keeping it coherent when they change is a job in itself
    * the few that provide companion client-side components don't let you easily customize them or add your own
-   * _PageAmp cancels the client/server divide making real, customizable client/server components natural to write_.
+
+> PageAmp cancels the client/server divide making real, customizable client/server components natural to write
