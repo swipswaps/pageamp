@@ -9,7 +9,7 @@ It allows you to:
 3. modularise your source code and bring it all together with the <:import> tag
 4. separate content and markup, as well as to access and implement local and remote services
 5. define common blocks as custom tags, keeping your code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
-6. turn blocks into easily reusable components and leverage PageAmp's [Page Kit](http://devel.ubimate.com/).
+6. turn blocks into proper HTML components and leverage PageAmp's [Page Kit](http://devel.ubimate.com/).
 
 [See it in action](http://pageamp.org/#see-it-in-action)
 
