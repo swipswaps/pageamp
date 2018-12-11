@@ -17,8 +17,8 @@ It allows you to:
 
 ## How it works
 
-1. **it extends HTML**: its additions are marked with `:` in tag and attribute names and wrapped in `${}` in texts and attributes.
-2. **it works in the server**: once you copy its `.pageamp/`, `index.php` and `.htaccess` to a LAMP server, it will handle page requests and execute application logic at page delivery.
+1. **it extends HTML**: its additions are marked with `:` in tag and attribute names and wrapped in `${}` in texts and attributes
+2. **it works in the server**: once you copy its `.pageamp/`, `index.php` and `.htaccess` to a LAMP server, it will handle page requests and execute application logic at page delivery
 3. **it works in the client**: the output will be a standard and complete HTML page, but will also include application state and code so capable clients can take over application execution.
 
 ## How it compares
