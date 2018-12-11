@@ -17,20 +17,20 @@ It allows you to:
 
 ## How it works
 
-1. It extends HTML: its additions are marked with `:` in tag and attribute names and wrapped in `${}` in texts and attributes.
-2. It works in the server: once you copy its `.pageamp/`, `index.php` and `.htaccess` to a LAMP server, it will handle page requests and execute application logic at page delivery.
-3. It works in the client: the output will be a standard and complete HTML page, but will also include application state and code so capable clients can take over application execution.
+1. **it extends HTML**: its additions are marked with `:` in tag and attribute names and wrapped in `${}` in texts and attributes.
+2. **it works in the server**: once you copy its `.pageamp/`, `index.php` and `.htaccess` to a LAMP server, it will handle page requests and execute application logic at page delivery.
+3. **it works in the client**: the output will be a standard and complete HTML page, but will also include application state and code so capable clients can take over application execution.
 
 ## How it compares
 
-1. Reactive JS frameworks: the latest trend in web development, and yet, born for the client only. [React](https://reactjs.org/) and [Vue.js](https://vuejs.org/) are great, but:
+1. **reactive JS frameworks**: the latest trend in web development, and yet, born for the client only. [React](https://reactjs.org/) and [Vue.js](https://vuejs.org/) are great, but:
 
    * server-side rendering is bit of a gimmick, and how many projects are you actually [hosting on NodeJS](https://w3techs.com/technologies/overview/programming_language/all) anyway?
    * they override the declarative HTML with the procedural JavaScript — only to then having to mitigate that with yet another language like [JSX](https://reactjs.org/docs/introducing-jsx.html)
 
 > PageAmp keeps it straight by making HTML reactive itself, and it works in the server out of the box
 
-2. Server-side templating: each server technology has its own set, but none can make the client an integral part of their design:
+2. **server-side templating**: each server technology has its own set, but none can make the client an integral part of their design:
 
    * in most, output pages are static by design: adding dynamic behaviour and, crucially, keeping it coherent when they change is a job in itself
    * the few that provide companion client-side components don't let you easily customize them or add your own
