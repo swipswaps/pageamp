@@ -1,3 +1,5 @@
+## What it is
+
 PageAmp is a ground breaking server-side tool for web developers. It [makes HTML reactive](https://github.com/ubimate/pageamp/wiki/White-Paper) and it's designed to work in a standard [LAMP environment](https://en.wikipedia.org/wiki/LAMP_(software_bundle)). You'll be surprised at how simple and effective reactive HTML can be.
 
 It allows you to:
