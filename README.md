@@ -1,15 +1,17 @@
+[homepage](http://pageamp.org)
+
 ## What it is
 
-PageAmp is a ground breaking server-side tool for web developers. It [makes HTML reactive](https://github.com/ubimate/pageamp/wiki/White-Paper) and it's designed to work in a standard [LAMP environment](https://en.wikipedia.org/wiki/LAMP_(software_bundle)). You'll be surprised at how simple and effective reactive HTML can be.
+PageAmp is a ground breaking server-side tool for web developers. It [makes HTML reactive](https://github.com/ubimate/pageamp/wiki/White-Paper#reactivity) and it's designed to work in a standard [LAMP environment](https://en.wikipedia.org/wiki/LAMP_(software_bundle)). You'll be surprised at how simple and effective reactive HTML can be.
 
 It allows you to:
 
 1. add reactive logic to plain HTML that works the same in both the server and the client
-2. make pages ready for search engine indexing and still fully dynamic in the browser
-3. modularise your source code and bring it all together with the <:import> tag
-4. separate content and markup, as well as to access and implement local and remote services
-5. define common blocks as custom tags, keeping your code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
-6. turn blocks into proper HTML components and leverage PageAmp's [Page Kit](http://devel.ubimate.com/).
+2. make pages [ready for search engine indexing and still fully dynamic in the browser](https://github.com/ubimate/pageamp/wiki/White-Paper#isomorphism)
+3. modularise your source code and bring it all together with the [<:import>](https://github.com/ubimate/pageamp/wiki/White-Paper#isomorphism) tag
+4. [separate content and markup](https://github.com/ubimate/pageamp/wiki/White-Paper#data-binding), as well as to access and implement local and remote services
+5. define common blocks as [custom tags](https://github.com/ubimate/pageamp/wiki/White-Paper#custom-tags), keeping your code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
+6. turn blocks into proper [HTML components](https://github.com/ubimate/pageamp/wiki/White-Paper#components) and leverage PageAmp's [Page Kit](http://devel.ubimate.com/).
 
 [See it in action](http://pageamp.org/#see-it-in-action)
 
