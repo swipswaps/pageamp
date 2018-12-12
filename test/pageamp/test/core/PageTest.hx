@@ -4,7 +4,7 @@ import pageamp.util.Test;
 
 class PageTest extends Test {
 
-	public function testNode1() {
+	public function testDummy() {
 		//TODO
 	}
 

@@ -5,10 +5,10 @@ import pageamp.test.web.*;
 import pageamp.test.react.*;
 import pageamp.util.Test;
 
-class PageAmpSuite extends TestRoot {
+class PageAmpTests extends TestRoot {
 
 	static public function main() {
-		new PageAmpSuite(function(p:Test) {
+		new PageAmpTests(function(p:Test) {
 			new React(p, function(p:Test) {
 				new ScopeTest(p);
 				new ValueTest(p);
