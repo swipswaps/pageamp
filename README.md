@@ -17,6 +17,8 @@ It allows you to:
 
 [Read the white paper](https://github.com/ubimate/pageamp/wiki/White-Paper)
 
+[Development Kanban board](https://trello.com/b/aULGQZAd)
+
 ## How it works
 
 1. **it extends HTML**: its additions are marked with `:` in tag and attribute names and wrapped in `${}` in texts and attributes
