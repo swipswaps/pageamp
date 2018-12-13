@@ -34,6 +34,8 @@ using pageamp.util.SourceTools;
 
 //TODO: verifica e logging errori
 class Loader {
+	public static inline var HIDDEN_COMMENT = '<!---';
+	public static inline var HIDDEN_ATTR = '::';
 
 	public static function loadPage(src:HtmlDocument,
 	                                dst:DomDocument,
@@ -107,6 +109,9 @@ class Loader {
 		tagname ? props.set(Element.TAG_PROP, e.name) : null;
 		for (a in e.attributes) {
 			var key = a.name;
+			if (key.startsWith(HIDDEN_ATTR)) {
+				continue;
+			}
 			var val = a.value;
 			if (key.startsWith(Element.CLASS_PREFIX) && val == null) {
 				val = '1';
@@ -126,7 +131,7 @@ class Loader {
 			if (Std.is(n, HtmlNodeElement)) {
 				loadElement(p, untyped n);
 			} else if (Std.is(n, HtmlNodeText)) {
-				if (StringTools.startsWith(untyped n.text, '<!---')/* &&
+				if (StringTools.startsWith(untyped n.text, HIDDEN_COMMENT)/* &&
 					StringTools.endsWith(untyped n.text, '-->')*/) {
 					// nop
 				} else {
