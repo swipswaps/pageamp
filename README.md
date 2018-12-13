@@ -1,4 +1,4 @@
-[homepage](http://pageamp.org) | [white paper](https://github.com/ubimate/pageamp/wiki/White-Paper) | [see it in action](http://pageamp.org/#see-it-in-action) | [development board](https://trello.com/b/aULGQZAd)
+[homepage](http://pageamp.org) | [white paper](https://github.com/ubimate/pageamp/wiki/White-Paper) | [live samples](http://pageamp.org/#see-it-in-action) | [development board](https://trello.com/b/aULGQZAd)
 
 ## What it is
 
