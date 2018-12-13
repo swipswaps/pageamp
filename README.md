@@ -1,4 +1,4 @@
-[homepage](http://pageamp.org)
+[homepage](http://pageamp.org) | [white paper](https://github.com/ubimate/pageamp/wiki/White-Paper) | [see it in action](http://pageamp.org/#see-it-in-action) | [development board](https://trello.com/b/aULGQZAd)
 
 ## What it is
 
@@ -12,12 +12,6 @@ It allows you to:
 4. [separate content and markup](https://github.com/ubimate/pageamp/wiki/White-Paper#data-binding), as well as to access and implement local and remote services
 5. define common blocks as [custom tags](https://github.com/ubimate/pageamp/wiki/White-Paper#custom-tags), keeping your code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
 6. turn blocks into proper [HTML components](https://github.com/ubimate/pageamp/wiki/White-Paper#components) and leverage PageAmp's [Page Kit](http://devel.ubimate.com/).
-
-[See it in action](http://pageamp.org/#see-it-in-action)
-
-[Read the white paper](https://github.com/ubimate/pageamp/wiki/White-Paper)
-
-[Development Kanban board](https://trello.com/b/aULGQZAd)
 
 ## How it works
 
