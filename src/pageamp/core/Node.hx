@@ -36,7 +36,7 @@ using pageamp.util.PropertyTool;
 * Common abstract superclass for ubimate.core package.
 **/
 class Node extends BaseNode {
-	public static inline var NODE_PREFIX = 'node-';
+	public static inline var NODE_PREFIX = 'n_';
 	public static inline var NODE_PLUG = NODE_PREFIX + 'plug';
 	public static inline var NODE_INDEX = NODE_PREFIX + 'index';
 	public var id: Int;
@@ -53,8 +53,14 @@ class Node extends BaseNode {
 		super(parent, props.get(NODE_PLUG), props.get(NODE_INDEX), cb);
 	}
 
+	#if !debug inline #end
+	public function getProp(key:String, ?defval:Dynamic) {
+		return props.get(key, defval);
+	}
+
 	public function set(key:String, val:Dynamic, push=true): Value {
-		return null;
+		scope == null ? makeScope() : null;
+		return scope.set(key, val, push);
 	}
 
 	// this forces an update push to dependent values even if val is the same
@@ -63,7 +69,7 @@ class Node extends BaseNode {
 	}
 
 	public function get(key:String, pull=true): Dynamic {
-		return null;
+		return (scope != null ? scope.get(key, pull) : null);
 	}
 
 	public inline function refresh() {

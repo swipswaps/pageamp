@@ -1,5 +1,6 @@
 package pageamp.core;
 
+import pageamp.web.DomTools.DomElement;
 import pageamp.util.Set;
 
 /**
@@ -17,6 +18,10 @@ interface Root {
 	public function typeInit(node:Node, cb:Void->Void): Void;
 
 	public function nextId(): Int;
+
+	public function createDomElement(tagname:String): DomElement;
+
+	public function getComputedStyle(name:String, ?pseudoElt:String): String;
 
 }
 
@@ -36,6 +41,14 @@ class RootHelper implements Root {
 
 	public function nextId(): Int {
 		return currId++;
+	}
+
+	public function createDomElement(tagname:String): DomElement {
+		return null;
+	}
+
+	public function getComputedStyle(name:String, ?pseudoElt:String): String {
+		return '';
 	}
 
 }

@@ -1,5 +1,6 @@
 package pageamp.test.core;
 
+import pageamp.web.DomTools.DomElement;
 import pageamp.util.BaseNode;
 import pageamp.util.PropertyTool;
 import pageamp.core.Root;
@@ -67,6 +68,10 @@ class NodeTest extends Test {
 
 }
 
+// =============================================================================
+// TestNode
+// =============================================================================
+
 class TestNode extends Node implements Root {
 	public var rootHelper = new RootHelper();
 	public var staticInits = 0;
@@ -86,6 +91,14 @@ class TestNode extends Node implements Root {
 
 	override public function staticInit() {
 		staticInits++;
+	}
+
+	public function createDomElement(tagname:String): DomElement {
+		return null;
+	}
+
+	public function getComputedStyle(name:String, ?pseudoElt:String): String {
+		return '';
 	}
 
 }
