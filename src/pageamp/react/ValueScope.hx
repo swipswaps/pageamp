@@ -69,7 +69,8 @@ class ValueScope {
 		}
 	}
 
-	public inline function refresh() {
+	#if (!test) inline #end
+	public  function refresh() {
 		context.refresh(this);
 	}
 
@@ -196,7 +197,6 @@ class ValueScope {
 		var v:Value = untyped refreshableList.next;
 //		trace('-----');//tempdebug
 		while (v != null) {
-//			trace(v.name);//tempdebug
 			v.get();
 			v = untyped v.next;
 		}

@@ -582,7 +582,8 @@ class DomTools {
 			var r2 = iframe.contentDocument.documentElement;
 			r2.innerHTML = r1.innerHTML;
 			cb(iframe.contentDocument, function() {
-				Browser.document.body.removeChild(iframe);
+				//Browser.document.body.removeChild(iframe);
+				iframe.remove();
 			});
 		}
 		iframe.style.display = 'none';

@@ -17,6 +17,7 @@ using pageamp.web.DomTools;
 * An Element represents a DOM Element.
 **/
 class Element extends Node {
+	public static inline var ID_DOM_ATTRIBUTE = 'data-pa';
 	public static inline var ATTRIBUTE_PREFIX = 'a_';
 	public static inline var CLASS_PREFIX = 'c_';
 	public static inline var STYLE_PREFIX = 's_';
@@ -43,6 +44,10 @@ class Element extends Node {
 	// runtime object DOM property
 	public static inline var PAGEAMP_OBJECT = 'pageamp';
 
+//	public function new(parent:Node, ?props:Props, ?cb:Dynamic->Void) {
+//		super(parent, props, cb);
+//	}
+
 	override public function set(key:String, val:Dynamic, push=true): Value {
 		var ret = null;
 		if (key.startsWith(ATTRIBUTE_PREFIX) && !isDynamicValue(key, val)) {
@@ -62,22 +67,23 @@ class Element extends Node {
 	override public function makeScope(?name:String) {
 		name == null ? name = props.get(NAME_PROP) : null;
 		super.makeScope(name);
-		set('this', scope);
-		// node tree
-		set('parentNode', scope.parent).unlink();
-		set('siblingNodes', getSiblingScopes).unlink();
-		set('childNodes', getChildScopes).unlink();
-		set('childrenCount', "${dom.children.length}");
-		set('removeSelf', removeSelf).unlink();
-		// values
-		set('animate', scope.animate).unlink();
-		set('delayedSet', scope.delayedSet).unlink();
-		set('sendTo', sendTo).unlink();
-		// dom
-		set('dom', dom);
-		set('computedStyle', getComputedStyle).unlink();
-		//initDatabinding();
-		//initReplication();
+		dom.domSet(ID_DOM_ATTRIBUTE, Std.string(id));
+//		set('this', scope);
+//		// node tree
+//		set('parentNode', scope.parent).unlink();
+//		set('siblingNodes', getSiblingScopes).unlink();
+//		set('childNodes', getChildScopes).unlink();
+//		set('childrenCount', "${dom.children.length}");
+//		set('removeSelf', removeSelf).unlink();
+//		// values
+//		set('animate', scope.animate).unlink();
+//		set('delayedSet', scope.delayedSet).unlink();
+//		set('sendTo', sendTo).unlink();
+//		// dom
+//		set('dom', dom);
+//		set('computedStyle', getComputedStyle).unlink();
+//		//initDatabinding();
+//		//initReplication();
 	}
 
 	// =========================================================================

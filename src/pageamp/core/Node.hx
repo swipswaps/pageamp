@@ -48,7 +48,7 @@ class Node extends BaseNode {
 	public var children(get,null): Array<Node>;
 	public inline function get_children(): Array<Node> return cast baseChildren;
 
-	function new(parent:Node, ?props:Props, ?cb:Dynamic->Void) {
+	public function new(parent:Node, ?props:Props, ?cb:Dynamic->Void) {
 		this.props = props;
 		super(parent, props.get(NODE_PLUG), props.get(NODE_INDEX), cb);
 	}
@@ -72,7 +72,8 @@ class Node extends BaseNode {
 		return (scope != null ? scope.get(key, pull) : null);
 	}
 
-	public inline function refresh() {
+	#if (!test) inline #end
+	public function refresh() {
 		scope != null ? scope.refresh() : null;
 	}
 
@@ -168,12 +169,9 @@ class Node extends BaseNode {
 		var pn = parent;
 		var ps:ValueScope = null;
 		while (pn != null) {
-			if (Std.is(pn, Element)) {
-				var pe:Element = untyped pn;
-				if (pe.scope != null) {
-					ps = pe.scope;
-					break;
-				}
+			if (pn.scope != null) {
+				ps = pn.scope;
+				break;
 			}
 			pn = pn.parent;
 		}

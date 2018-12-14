@@ -1,7 +1,7 @@
-package pageamp.test.core;
+package pageamp.test2.core;
 
 import pageamp.util.PropertyTool;
-import pageamp.test.core.NodeTest.TestNode;
+import pageamp.test2.core.NodeTest.TestNode;
 import pageamp.core.Element;
 import pageamp.web.DomTools;
 import pageamp.util.Test;
@@ -11,8 +11,9 @@ using pageamp.web.DomTools;
 
 class ElementTest extends Test {
 
-	function testDomAttribute() {
+	function testDomAttribute1() {
 		DomTools.testDoc(null, function(doc:DomDocument, cleanup:Void->Void) {
+			trace('testDomAttribute1()');
 			var root = new TestRootElement(doc);
 			var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
 			props.set(Element.ATTRIBUTE_PREFIX + 'id', 'my-id');
@@ -27,8 +28,34 @@ class ElementTest extends Test {
 		});
 	}
 
-	function testClassAttribute2() {
+	function testDomAttribute2() {
+		DomTools.testDoc(null, function(doc:DomDocument, cleanup:Void->Void) {
+			trace('testDomAttribute2()');
+			var root = new TestRootElement(doc);
+			var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
+			props.set(Element.ATTRIBUTE_PREFIX + 'id', "${'my-id'}");
+			var p = new Element(root, props);
+
+			var s = doc.domToString();
+			trace(s);
+			assert(s, '<html>'
+			+ '<head></head><body>'
+			+ '</body></html>');
+
+			root.refresh();
+
+			s = doc.domToString();
+			trace(s);
+			assert(s, '<html>'
+			+ '<head></head><body id="my-id">'
+			+ '</body></html>');
+
+			cleanup();
+			didDelay();
+		});
 	}
+
+	function testDummy() {}
 
 }
 

@@ -458,6 +458,7 @@ class TestRoot extends Test {
 			var head = '<meta charset="UTF-8">\n' +
 					   '<style>\n' +
 					   'body{font-family:Arial,Helvetica,sans-serif;' +
+					   'color:#ccc;background:#222;' +
 					   'padding-bottom:8px}\n' +
 					   'ul{list-style:disc;margin: 0 0 2px 0;display:none}\n' +
 					   '.testsuite{padding: 3px 0 3px 0; font-weight:bold}\n' +
