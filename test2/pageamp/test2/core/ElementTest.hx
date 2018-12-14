@@ -41,6 +41,44 @@ class ElementTest extends TestCase {
 		+ '</body></html>', doc.domToString());
 	}
 
+	function testClassAttribute1() {
+		var doc = TestAll.getDoc();
+		var root = new TestRootElement(doc);
+		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
+		props.set(Element.CLASS_PREFIX + 'class1', "${true}");
+		var p = new Element(root, props);
+		root.refresh();
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2" class="class1">'
+		+ '</body></html>', doc.domToString());
+
+		p.set('c_class1', false);
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2" class="">'
+		+ '</body></html>', doc.domToString());
+	}
+
+	function testStyleAttribute1() {
+		var doc = TestAll.getDoc();
+		var root = new TestRootElement(doc);
+		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
+		props.set(Element.STYLE_PREFIX + 'color', "red");
+		var p = new Element(root, props);
+		root.refresh();
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2" style="color: red;">'
+		+ '</body></html>', doc.domToString());
+
+		p.set('c_class1', null);
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2">'
+		+ '</body></html>', doc.domToString());
+	}
+
 }
 
 // =============================================================================

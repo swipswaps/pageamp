@@ -1,5 +1,6 @@
 package pageamp.core;
 
+import pageamp.util.Util;
 import pageamp.web.DomTools;
 import pageamp.util.PropertyTool;
 import pageamp.react.*;
@@ -196,9 +197,9 @@ class Element extends Node {
 			if (!props.exists(FOREACH_PROP) || v.nativeName != 'style') {
 				v.cb = attributeValueCB;
 			}
-//		} else if (name.startsWith(CLASS_PREFIX)) {
-//			v.nativeName = makeNativeName(name, CLASS_PREFIX.length);
-//			v.cb = classValueCB;
+		} else if (name.startsWith(CLASS_PREFIX)) {
+			v.nativeName = makeNativeName(name, CLASS_PREFIX.length);
+			v.cb = classValueCB;
 //		} else if (name.startsWith(STYLE_PREFIX)) {
 //			v.nativeName = makeNativeName(name, STYLE_PREFIX.length);
 //			if (!props.exists(FOREACH_PROP)) {
@@ -244,11 +245,66 @@ class Element extends Node {
 	}
 
 	// =========================================================================
-	// reflection
+	// dom attribute reflection
 	// =========================================================================
 
 	function attributeValueCB(e:DomElement, key:String, val:Dynamic) {
 		e.domSet(key, (val != null ? Std.string(val) : null));
 	}
+
+	// =========================================================================
+	// class reflection
+	// =========================================================================
+#if !client
+	var classes: Map<String, Bool>;
+	var willApplyClasses = false;
+#else
+	var resizeMonitor = false;
+#end
+
+	function classValueCB(e:DomElement, key:String, v:Dynamic) {
+		var flag = Util.isTrue(v != null ? '$v' : '1');
+#if !client
+		classes == null ? classes = new Map<String, Bool>() : null;
+		flag ? classes.set(key, true) : classes.remove(key);
+		if (!willApplyClasses) {
+			willApplyClasses = true;
+			scope.context.addApply(applyClasses);
+		}
+#else
+		if (flag) {
+			dom.classList.add(key);
+		} else {
+			dom.classList.remove(key);
+		}
+	#if resizeMonitor
+		if (key == Page.RESIZE_CLASS && flag && !resizeMonitor) {
+			resizeMonitor = true;
+			//TODO: these should be defined earlier in case ub1-resize class is
+			//set, so other values can reliably depend on them; they should also
+			//be reliably initializated with the actual clientWidth/Height after
+			//the first refresh
+			set('resizeWidth', -1).unlink();
+			set('resizeHeight', -1).unlink();
+			page.observeResize(e);
+		}
+	#end
+#end
+	}
+
+#if !client
+	function applyClasses() {
+		willApplyClasses = false;
+		var sb = new StringBuf();
+		var sep = '';
+		for (key in classes.keys()) {
+			if (classes.get(key)) {
+				sb.add(sep); sep = ' '; sb.add(key);
+			}
+		}
+		var s = sb.toString();
+		dom.domSet('class', s); //(s.length > 0 ? s : null));
+	}
+#end
 
 }
