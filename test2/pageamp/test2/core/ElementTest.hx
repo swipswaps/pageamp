@@ -72,10 +72,10 @@ class ElementTest extends TestCase {
 		+ '<head></head><body data-pa="2" style="color: red;">'
 		+ '</body></html>', doc.domToString());
 
-		p.set('c_class1', null);
+		p.set('s_color', null);
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">'
+		+ '<head></head><body data-pa="2" style="">'
 		+ '</body></html>', doc.domToString());
 	}
 

@@ -200,11 +200,11 @@ class Element extends Node {
 		} else if (name.startsWith(CLASS_PREFIX)) {
 			v.nativeName = makeNativeName(name, CLASS_PREFIX.length);
 			v.cb = classValueCB;
-//		} else if (name.startsWith(STYLE_PREFIX)) {
-//			v.nativeName = makeNativeName(name, STYLE_PREFIX.length);
-//			if (!props.exists(FOREACH_PROP)) {
-//				v.cb = styleValueCB;
-//			}
+		} else if (name.startsWith(STYLE_PREFIX)) {
+			v.nativeName = makeNativeName(name, STYLE_PREFIX.length);
+			if (!props.exists(FOREACH_PROP)) {
+				v.cb = styleValueCB;
+			}
 //		} else if (name.startsWith(EVENT_PREFIX)) {
 //			v.unlink(); // non refreshed
 //			if (v.isDynamic()) {
@@ -304,6 +304,45 @@ class Element extends Node {
 		}
 		var s = sb.toString();
 		dom.domSet('class', s); //(s.length > 0 ? s : null));
+	}
+#end
+
+	// =========================================================================
+	// style reflection
+	// =========================================================================
+#if !client
+	var styles: Map<String, String>;
+	var willApplyStyles = false;
+#end
+
+	function styleValueCB(e:DomElement, key:String, val:Dynamic) {
+#if !client
+		styles == null ? styles = new Map<String, String>() : null;
+		val != null ? styles.set(key, Std.string(val)) : styles.remove(key);
+		if (!willApplyStyles) {
+			willApplyStyles = true;
+			scope.context.addApply(applyStyles);
+		}
+#else
+		if (val != null) {
+			e.style.setProperty(key, Std.string(val));
+		} else {
+			e.style.removeProperty(key);
+		}
+#end
+	}
+
+#if !client
+	function applyStyles() {
+		willApplyStyles = false;
+		var sb = new StringBuf();
+		var sep = '';
+		for (key in styles.keys()) {
+			//sb.add(sep); sep = ';';
+			sb.add(key); sb.add(': '); sb.add(styles.get(key)); sb.add(';');
+		}
+		var s = sb.toString();
+		dom.domSet('style', s); //(s.length > 0 ? s : null));
 	}
 #end
 
