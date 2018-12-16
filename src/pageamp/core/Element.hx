@@ -1,5 +1,7 @@
 package pageamp.core;
 
+import pageamp.data.DataProvider;
+import pageamp.data.DataPath;
 import pageamp.util.Util;
 import pageamp.web.DomTools;
 import pageamp.util.PropertyTool;
@@ -231,7 +233,7 @@ class Element extends Node {
 		// dom
 		set('dom', dom);
 		set('computedStyle', getComputedStyle).unlink();
-		//initDatabinding();
+		initDatabinding();
 		//initReplication();
 	}
 
@@ -415,5 +417,81 @@ class Element extends Node {
 	// =========================================================================
 	// databinding
 	// =========================================================================
+	var currDatapathSrc: String;
+	var currDatapathExp: DataPath;
+	var dataQueries: Map<String,DataPath>;
+
+	#if !debug inline #end
+	function initDatabinding() {
+		scope.set('__clone_dp', null);
+		scope.setValueFn('__dp', dpFn);
+		scope.set('dataGet', dataGet).unlink();
+		scope.set('dataCheck', dataCheck).unlink();
+	}
+
+	function dpFn() {
+		// dependencies
+		var ret:Xml = get('__clone_dp');
+		if (ret == null && baseParent != null) {
+			ret = parent.get('__dp');
+		}
+		var src:String = get(DATAPATH_PROP);
+
+		// evaluation
+		if (src != null
+			&& Std.is(src,String)
+			&& (src = src.trim()).length > 0) {
+			var exp = currDatapathExp;
+			if (src != currDatapathSrc) {
+				currDatapathSrc = src;
+				exp = currDatapathExp = new DataPath(src, getDatasource);
+			}
+			ret = exp.selectNode(ret);
+		}
+
+		return ret;
+	}
+
+	function dataGet(dpath:String): String {
+		var ret = '';
+
+		// dependencies
+		var dp:Xml = getScope().get('__dp');
+
+		if (dpath != null
+		&& Std.is(dpath,String)
+		&& (dpath = dpath.trim()).length > 0) {
+			if (dataQueries == null) {
+				dataQueries = new Map<String,DataPath>();
+			}
+			var query:DataPath = dataQueries.get(dpath);
+			if (query == null) {
+				query = new DataPath(dpath, getDatasource);
+				dataQueries.set(dpath, query);
+			}
+			ret = query.selectValue(dp, '');
+		} else {
+			ret = (dp != null ? '1' : '');
+		}
+
+		return ret;
+	}
+
+	function dataCheck(?dpath:String): Bool {
+		return (this.dataGet(dpath) != '');
+	}
+
+	function getDatasource(name:String): DataProvider {
+		var ret:DataProvider = null;
+		var scope = getScope();
+		var v:Dynamic = scope.lookup(name);
+		if (Std.is(v, ValueScope)) {
+			v = cast(v, ValueScope).owner;
+		}
+		if (Std.is(v, DataProvider)) {
+			ret = v;
+		}
+		return ret;
+	}
 
 }
