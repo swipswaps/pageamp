@@ -59,6 +59,26 @@ class Element extends Node {
 		return ret;
 	}
 
+	public function setHidden(flag:Bool) {
+		if ((hidden = flag)) {
+#if !client
+			dom.domSet('style', 'display: none;');
+#else
+			dom.style.setProperty('display', 'none');
+#end
+		} else {
+#if !client
+			dom.domSet('style', style);
+#else
+			if (display != null) {
+				dom.style.setProperty('display', display);
+			} else {
+				dom.style.removeProperty('display');
+			}
+#end
+		}
+	}
+
 	// =========================================================================
 	// abstract methods
 	// =========================================================================
@@ -126,6 +146,7 @@ class Element extends Node {
 	// private
 	// =========================================================================
 	var dom: DomElement;
+	var hidden = false;
 
 	function init2() {
 		super.init();
@@ -315,9 +336,16 @@ class Element extends Node {
 	// =========================================================================
 	// dom attribute reflection
 	// =========================================================================
+	var style: String;
 
 	function attributeValueCB(e:DomElement, key:String, val:Dynamic) {
-		e.domSet(key, (val != null ? Std.string(val) : null));
+		var s = (val != null ? Std.string(val) : null);
+		if (key == 'style') {
+			style = s;
+			hidden ? null : e.domSet(key, s);
+		} else {
+			e.domSet(key, s);
+		}
 	}
 
 	// =========================================================================
@@ -381,19 +409,28 @@ class Element extends Node {
 #if !client
 	var styles: Map<String, String>;
 	var willApplyStyles = false;
+#else
+	var display: String;
 #end
 
 	function styleValueCB(e:DomElement, key:String, val:Dynamic) {
+		var s = (val != null ? Std.string(val) : null);
 #if !client
 		styles == null ? styles = new Map<String, String>() : null;
-		val != null ? styles.set(key, Std.string(val)) : styles.remove(key);
+		val != null ? styles.set(key, s) : styles.remove(key);
 		if (!willApplyStyles) {
 			willApplyStyles = true;
 			scope.context.addApply(applyStyles);
 		}
 #else
+		if (key == 'display') {
+			display = s;
+			if (hidden) {
+				return;
+			}
+		}
 		if (val != null) {
-			e.style.setProperty(key, Std.string(val));
+			e.style.setProperty(key, s);
 		} else {
 			e.style.removeProperty(key);
 		}
@@ -409,8 +446,10 @@ class Element extends Node {
 			//sb.add(sep); sep = ';';
 			sb.add(key); sb.add(': '); sb.add(styles.get(key)); sb.add(';');
 		}
-		var s = sb.toString();
-		dom.domSet('style', s); //(s.length > 0 ? s : null));
+		style = sb.toString();
+		if (!hidden) {
+			dom.domSet('style', style);
+		}
 	}
 #end
 
@@ -459,8 +498,8 @@ class Element extends Node {
 		var dp:Xml = getScope().get('__dp');
 
 		if (dpath != null
-		&& Std.is(dpath,String)
-		&& (dpath = dpath.trim()).length > 0) {
+			&& Std.is(dpath,String)
+			&& (dpath = dpath.trim()).length > 0) {
 			if (dataQueries == null) {
 				dataQueries = new Map<String,DataPath>();
 			}
@@ -485,9 +524,6 @@ class Element extends Node {
 		var ret:DataProvider = null;
 		var scope = getScope();
 		var v:Dynamic = scope.lookup(name);
-		if (Std.is(v, ValueScope)) {
-			v = cast(v, ValueScope).owner;
-		}
 		if (Std.is(v, DataProvider)) {
 			ret = v;
 		}

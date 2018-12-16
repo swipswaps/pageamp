@@ -109,6 +109,46 @@ class ElementTest extends TestCase {
 		+ '</body></html>', doc.domToString());
 	}
 
+	function testHidden1() {
+		var doc = TestAll.getDoc();
+		var root = new TestRootElement(doc);
+		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
+		props.set(Element.STYLE_PREFIX + 'color', "red");
+		var p = new Element(root, props);
+		root.refresh();
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2" style="color: red;">'
+		+ '</body></html>', doc.domToString());
+
+		p.setHidden(true);
+
+		assertEquals('<html>'
+#if !client
+		+ '<head></head><body data-pa="2" style="display: none;">'
+#else
+		+ '<head></head><body data-pa="2" style="color: red; display: none;">'
+#end
+		+ '</body></html>', doc.domToString());
+
+		p.set('s_color', 'blue');
+
+		assertEquals('<html>'
+#if !client
+		+ '<head></head><body data-pa="2" style="display: none;">'
+#else
+		+ '<head></head><body data-pa="2" style="color: blue; display: none;">'
+#end
+		+ '</body></html>', doc.domToString());
+
+		p.setHidden(false);
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2" style="color: blue;">'
+		+ '</body></html>', doc.domToString());
+
+	}
+
 	function testDatabinding1() {
 		var doc = TestAll.getDoc();
 		var root = new TestRootElement(doc);
