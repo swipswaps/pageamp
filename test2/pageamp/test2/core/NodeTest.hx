@@ -1,5 +1,6 @@
 package pageamp.test2.core;
 
+import pageamp.core.Define;
 import pageamp.web.DomTools;
 import pageamp.util.BaseNode;
 import pageamp.core.Root;
@@ -76,14 +77,7 @@ class NodeTest extends TestCase {
 class TestNode extends Node implements Root {
 	public var rootHelper = new RootHelper();
 	public var staticInits = 0;
-
-	public function typeInit(node:Node, cb:Void->Void): Void {
-		rootHelper.typeInit(node, cb);
-	}
-
-	public function nextId(): Int {
-		return rootHelper.nextId();
-	}
+	public var defines = new Map<String, Define>();
 
 	public function getSlots() {
 		slots == null ? slots = new Map<String, BaseNode>() : null;
@@ -94,12 +88,32 @@ class TestNode extends Node implements Root {
 		staticInits++;
 	}
 
+	// =========================================================================
+	// as Root
+	// =========================================================================
+
+	public function typeInit(node:Node, cb:Void->Void): Void {
+		rootHelper.typeInit(node, cb);
+	}
+
+	public function nextId(): Int {
+		return rootHelper.nextId();
+	}
+
 	public function createDomElement(tagname:String): DomElement {
-		return null;
+		return rootHelper.createDomElement(tagname);
+	}
+
+	public function getDefine(name:String): Define {
+		return rootHelper.getDefine(name);
+	}
+
+	public function setDefine(name:String, def:Define): Void {
+		rootHelper.setDefine(name, def);
 	}
 
 	public function getComputedStyle(name:String, ?pseudoElt:String): String {
-		return '';
+		return rootHelper.getComputedStyle(name, pseudoElt);
 	}
 
 }

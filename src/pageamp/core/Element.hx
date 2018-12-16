@@ -45,10 +45,6 @@ class Element extends Node {
 	// runtime object DOM property
 	public static inline var PAGEAMP_OBJECT = 'pageamp';
 
-//	public function new(parent:Node, ?props:Props, ?cb:Dynamic->Void) {
-//		super(parent, props, cb);
-//	}
-
 	override public function set(key:String, val:Dynamic, push=true): Value {
 		var ret = null;
 		if (key.startsWith(ATTRIBUTE_PREFIX) && !isDynamicValue(key, val)) {
@@ -62,29 +58,26 @@ class Element extends Node {
 	}
 
 	// =========================================================================
-	// API
+	// abstract methods
 	// =========================================================================
 
-	override public function makeScope(?name:String) {
-		name == null ? name = props.get(NAME_PROP) : null;
-		super.makeScope(name);
-		dom.domSet(ID_DOM_ATTRIBUTE, Std.string(id));
-//		set('this', scope);
-//		// node tree
-//		set('parentNode', scope.parent).unlink();
-//		set('siblingNodes', getSiblingScopes).unlink();
-//		set('childNodes', getChildScopes).unlink();
-//		set('childrenCount', "${dom.children.length}");
-//		set('removeSelf', removeSelf).unlink();
-//		// values
-//		set('animate', scope.animate).unlink();
-//		set('delayedSet', scope.delayedSet).unlink();
-//		set('sendTo', sendTo).unlink();
-//		// dom
-//		set('dom', dom);
-//		set('computedStyle', getComputedStyle).unlink();
-//		//initDatabinding();
-//		//initReplication();
+	override public function getDomNode(): DomNode {
+		return dom;
+	}
+
+	override public function cloneTo(parent:Node, ?index:Int): Node {
+		var props = this.props.clone();
+		props = props.set(Node.NODE_INDEX, index);
+		props.remove(NAME_PROP);
+		props.remove(Node.NODE_INDEX);
+		props.remove(FOREACH_PROP);
+		var clone = new Element(cast parent, props);
+		// clones must have their own scope in order to have their own data ctx
+		clone.scope == null ? clone.makeScope() : null;
+		for (child in children) {
+			child.cloneTo(clone);
+		}
+		return clone;
 	}
 
 	// =========================================================================
@@ -93,7 +86,38 @@ class Element extends Node {
 	var def: Define;
 
 	override function init() {
+		var tagname = props.get(ELEMENT_TAG);
+		if ((def = root.getDefine(tagname)) != null) {
+			props.remove(ELEMENT_TAG);
+			props = props.ensureWith(def.props);
+		}
 		init2();
+		var f = null;
+		f = function(p:Element, src:Element) {
+			for (n in src.children) {
+				if (Std.is(n, Element)) {
+					var t = new Element(p, PropertyTool.clone(untyped n.props));
+					collectSlot(t);
+					f(t, untyped n);
+				} if (Std.is(n, Text)) {
+					new Text(p, untyped n.text);
+				}
+			}
+		}
+		var f2 = null;
+		f2 = function(p:Element, def:Define) {
+			def.ext != null ? f2(p, def.ext) : null;
+			f(untyped p, def);
+		}
+		def != null ? f2(this, def) : null;
+	}
+
+	function collectSlot(n:Element) {
+		var slot = n.props.get(ELEMENT_SLOT);
+		if (slot != null) {
+			slots == null ? slots = new Map<String, BaseNode>() : null;
+			slots.set(slot, n);
+		}
 	}
 
 	// =========================================================================
@@ -132,8 +156,8 @@ class Element extends Node {
 			for (node in parent.children) {
 				if (node != this && node.scope != null) {
 					var v = (having != null
-					? node.scope.values.get(having)
-					: null);
+							? node.scope.values.get(having)
+							: null);
 					if (having != null && v == null) {
 						continue;
 					}
@@ -189,6 +213,28 @@ class Element extends Node {
 	// react
 	// =========================================================================
 
+	override public function makeScope(?name:String) {
+		name == null ? name = props.get(NAME_PROP) : null;
+		super.makeScope(name);
+		dom.domSet(ID_DOM_ATTRIBUTE, Std.string(id));
+		set('this', scope);
+		// node tree
+		set('parentNode', scope.parent).unlink();
+		set('siblingNodes', getSiblingScopes).unlink();
+		set('childNodes', getChildScopes).unlink();
+		set('childrenCount', "${dom.children.length}");
+		set('removeSelf', removeSelf).unlink();
+		// values
+		set('animate', scope.animate).unlink();
+		set('delayedSet', scope.delayedSet).unlink();
+		set('sendTo', sendTo).unlink();
+		// dom
+		set('dom', dom);
+		set('computedStyle', getComputedStyle).unlink();
+		//initDatabinding();
+		//initReplication();
+	}
+
 	override function newValueDelegate(v:Value) {
 		var name = v.name;
 		v.userdata = dom;
@@ -205,42 +251,62 @@ class Element extends Node {
 			if (!props.exists(FOREACH_PROP)) {
 				v.cb = styleValueCB;
 			}
-//		} else if (name.startsWith(EVENT_PREFIX)) {
-//			v.unlink(); // non refreshed
-//			if (v.isDynamic()) {
-//				// contains script
-//				var evname = name.substr(EVENT_PREFIX.length);
-//				e.domAddEventHandler(evname, v.evGet);
-//			}
-//		} else if (name.startsWith(HANDLER_PREFIX)) {
-//			v.unlink(); // non refreshed
-//			if (v.isDynamic()) {
-//				// contains script
-//				//TODO: this only supports single expressions (no ';' separator)
-//				var valname = name.substr(HANDLER_PREFIX.length);
-//				var refname = NODE_PREFIX + page.nextId();
-//				set(refname, "${" + valname + "}").cb = v.get3;
-//			}
-//		} else if (name == INNERTEXT_PROP) {
-//			// INNERTEXT_PROP is a shortcut for having a Tag create a nested
-//			// text node and keeping the latter's content updated with
-//			// possible INNERTEXT_PROP changes.
-//			// The normal way would be to explicitly create a Text inside
-//			// the Tag, but Texts with dynamic content also create a nested
-//			// marker element so the client code can look it up by ID and
-//			// link it to the proper Text. This cannot be used in tags like
-//			// <title>, hence this shortcut.
-//			//
-//			// NOTE: Preprocessor automatically uses this attribute when it
-//			// finds elements with a single text node child containing
-//			// dynamic expressions.
-//			v.userdata = e;
-//			v.cb = textValueCB;
-//		} else if (name == INNERHTML_PROP) {
-//			v.cb = htmlValueCB;
+		} else if (name.startsWith(EVENT_PREFIX)) {
+			v.unlink(); // non refreshed
+			if (v.isDynamic()) {
+				// contains script
+				var evname = name.substr(EVENT_PREFIX.length);
+				dom.domAddEventHandler(evname, v.evGet);
+			}
+		} else if (name.startsWith(HANDLER_PREFIX)) {
+			v.unlink(); // non refreshed
+			if (v.isDynamic()) {
+				// contains script
+				//TODO: this only supports single expressions (no ';' separator)
+				var valname = name.substr(HANDLER_PREFIX.length);
+				var refname = Node.NODE_PREFIX + root.nextId();
+				set(refname, "${" + valname + "}").cb = v.get3;
+			}
+		} else if (name == INNERTEXT_PROP) {
+			// INNERTEXT_PROP is a shortcut for having a Tag create a nested
+			// text node and keeping the latter's content updated with
+			// possible INNERTEXT_PROP changes.
+			// The normal way would be to explicitly create a Text inside
+			// the Tag, but Texts with dynamic content also create a nested
+			// marker element so the client code can look it up by ID and
+			// link it to the proper Text. This cannot be used in tags like
+			// <title>, hence this shortcut.
+			//
+			// NOTE: Preprocessor automatically uses this attribute when it
+			// finds elements with a single text node child containing
+			// dynamic expressions.
+			v.userdata = dom;
+			v.cb = textValueCB;
+		} else if (name == INNERHTML_PROP) {
+			v.cb = htmlValueCB;
 		}
 		if (!v.isDynamic() && v.cb != null) {
 			v.cb(v.userdata, v.nativeName, v.value);
+		}
+	}
+
+	// =========================================================================
+	// INNERTEXT_PROP reflection
+	// =========================================================================
+
+	function textValueCB(e:DomElement, _, val:Dynamic) {
+		if (val != null) {
+			dom.domSetInnerHTML(Std.string(val).split('<').join('&lt;'));
+		}
+	}
+
+	// =========================================================================
+	// INNERHTML_PROP reflection
+	// =========================================================================
+
+	function htmlValueCB(e:DomElement, _, val:Dynamic) {
+		if (val != null) {
+			dom.domSetInnerHTML(val != null ? Std.string(val) : '');
 		}
 	}
 
@@ -345,5 +411,9 @@ class Element extends Node {
 		dom.domSet('style', s); //(s.length > 0 ? s : null));
 	}
 #end
+
+	// =========================================================================
+	// databinding
+	// =========================================================================
 
 }

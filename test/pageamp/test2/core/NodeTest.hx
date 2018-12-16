@@ -1,5 +1,6 @@
 package pageamp.test2.core;
 
+import pageamp.core.Define;
 import pageamp.web.DomTools.DomElement;
 import pageamp.util.BaseNode;
 import pageamp.util.PropertyTool;

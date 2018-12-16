@@ -21,6 +21,10 @@ interface Root {
 
 	public function createDomElement(tagname:String): DomElement;
 
+	public function getDefine(name:String): Define;
+
+	public function setDefine(name:String, def:Define): Void;
+
 	public function getComputedStyle(name:String, ?pseudoElt:String): String;
 
 }
@@ -45,6 +49,14 @@ class RootHelper implements Root {
 
 	public function createDomElement(tagname:String): DomElement {
 		return null;
+	}
+
+	public function getDefine(name:String): Define {
+		return null;
+	}
+
+	public function setDefine(name:String, def:Define): Void {
+		// nop
 	}
 
 	public function getComputedStyle(name:String, ?pseudoElt:String): String {

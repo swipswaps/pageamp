@@ -6,10 +6,38 @@ import pageamp.test2.core.NodeTest.TestNode;
 import pageamp.util.PropertyTool;
 import pageamp.web.DomTools;
 
+using StringTools;
 using pageamp.util.PropertyTool;
 using pageamp.web.DomTools;
 
+//TODO: test event expressions
+//TODO: test handler expressions
+//TODO: test scripting API (see Element.makeScope())
 class ElementTest extends TestCase {
+
+	public function testInnerTextAttribute() {
+		var doc = TestAll.getDoc();
+		var root = new TestRootElement(doc);
+		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
+		props.set(Element.INNERTEXT_PROP, '1<a');
+		var p = new Element(root, props);
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2">1&lt;a'
+		+ '</body></html>', doc.domToString());
+	}
+
+	public function testInnerHtmlAttribute() {
+		var doc = TestAll.getDoc();
+		var root = new TestRootElement(doc);
+		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
+		props.set(Element.INNERHTML_PROP, '<p>hi!</p>');
+		var p = new Element(root, props);
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2"><p>hi!</p>'
+		+ '</body></html>', doc.domToString());
+	}
 
 	public function testDomAttribute1() {
 		var doc = TestAll.getDoc();
