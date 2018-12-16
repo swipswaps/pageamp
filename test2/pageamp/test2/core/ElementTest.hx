@@ -15,6 +15,7 @@ using pageamp.web.DomTools;
 //TODO: test event expressions
 //TODO: test handler expressions
 //TODO: test scripting API (see Element.makeScope())
+@:access(pageamp.core.Element)
 class ElementTest extends TestCase {
 
 	function testInnerTextAttribute() {
@@ -225,6 +226,41 @@ class ElementTest extends TestCase {
 
 		assertEquals('<html>'
 		+ '<head></head><body data-pa="2">Item B'
+		+ '</body></html>', doc.domToString());
+	}
+
+	function testDatabinding4() {
+		var doc = TestAll.getDoc();
+		var root = new TestRootElement(doc);
+		root.set('data1', new TestDataProvider('<root>
+			<item id="1">Item 1</item>
+			<item id="2">Item 2</item>
+			<item id="3">Item 3</item>
+		</root>'));
+		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
+		props.set(Element.DATAPATH_PROP, 'data1:/root/item');
+		props.set(Element.INNERTEXT_PROP, "$data{text()}");
+		var p = new Element(root, props);
+		root.refresh();
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2">Item 1'
+		+ '</body></html>', doc.domToString());
+
+		p.set(Element.DATAPATH_PROP, 'data1:/root/item[10]');
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2" style="display: none;">'
+		+ '</body></html>', doc.domToString());
+
+		p.set(Element.DATAPATH_PROP, 'data1:/root/item[2]');
+
+		assertEquals('<html>'
+#if !client
+		+ '<head></head><body data-pa="2">Item 2'
+#else
+		+ '<head></head><body data-pa="2" style="">Item 2'
+#end
 		+ '</body></html>', doc.domToString());
 	}
 

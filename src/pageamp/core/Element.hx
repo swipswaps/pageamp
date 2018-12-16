@@ -59,26 +59,6 @@ class Element extends Node {
 		return ret;
 	}
 
-	public function setHidden(flag:Bool) {
-		if ((hidden = flag)) {
-#if !client
-			dom.domSet('style', 'display: none;');
-#else
-			dom.style.setProperty('display', 'none');
-#end
-		} else {
-#if !client
-			dom.domSet('style', style);
-#else
-			if (display != null) {
-				dom.style.setProperty('display', display);
-			} else {
-				dom.style.removeProperty('display');
-			}
-#end
-		}
-	}
-
 	// =========================================================================
 	// abstract methods
 	// =========================================================================
@@ -168,6 +148,26 @@ class Element extends Node {
 	function makeDomElement() {
 		if ((dom = props.get(ELEMENT_DOM)) == null) {
 			dom = root.createDomElement(props.get(ELEMENT_TAG, 'div'));
+		}
+	}
+
+	function setHidden(flag:Bool) {
+		if ((hidden = flag)) {
+#if !client
+			dom.domSet('style', 'display: none;');
+#else
+			dom.style.setProperty('display', 'none');
+#end
+		} else {
+#if !client
+			dom.domSet('style', style);
+#else
+			if (display != null) {
+				dom.style.setProperty('display', display);
+			} else {
+				dom.style.removeProperty('display');
+			}
+#end
 		}
 	}
 
@@ -313,9 +313,9 @@ class Element extends Node {
 		}
 	}
 
-	// =========================================================================
+	// -------------------------------------------------------------------------
 	// INNERTEXT_PROP reflection
-	// =========================================================================
+	// -------------------------------------------------------------------------
 
 	function textValueCB(e:DomElement, _, val:Dynamic) {
 		if (val != null) {
@@ -323,9 +323,9 @@ class Element extends Node {
 		}
 	}
 
-	// =========================================================================
+	// -------------------------------------------------------------------------
 	// INNERHTML_PROP reflection
-	// =========================================================================
+	// -------------------------------------------------------------------------
 
 	function htmlValueCB(e:DomElement, _, val:Dynamic) {
 		if (val != null) {
@@ -333,9 +333,9 @@ class Element extends Node {
 		}
 	}
 
-	// =========================================================================
+	// -------------------------------------------------------------------------
 	// dom attribute reflection
-	// =========================================================================
+	// -------------------------------------------------------------------------
 	var style: String;
 
 	function attributeValueCB(e:DomElement, key:String, val:Dynamic) {
@@ -348,9 +348,9 @@ class Element extends Node {
 		}
 	}
 
-	// =========================================================================
+	// -------------------------------------------------------------------------
 	// class reflection
-	// =========================================================================
+	// -------------------------------------------------------------------------
 #if !client
 	var classes: Map<String, Bool>;
 	var willApplyClasses = false;
@@ -403,9 +403,9 @@ class Element extends Node {
 	}
 #end
 
-	// =========================================================================
+	// -------------------------------------------------------------------------
 	// style reflection
-	// =========================================================================
+	// -------------------------------------------------------------------------
 #if !client
 	var styles: Map<String, String>;
 	var willApplyStyles = false;
@@ -486,6 +486,9 @@ class Element extends Node {
 				exp = currDatapathExp = new DataPath(src, getDatasource);
 			}
 			ret = exp.selectNode(ret);
+			if (hidden != (ret == null)) {
+				setHidden(ret == null);
+			}
 		}
 
 		return ret;
