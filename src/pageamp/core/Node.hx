@@ -152,6 +152,19 @@ class Node extends BaseNode {
 			&& !Value.isConstantExpression(untyped v);
 	}
 
+	function parentWithNonNullProp(key:String): Node {
+		var ret = null;
+		var p = parent;
+		while (p != null) {
+			if (p.props.get(key) != null) {
+				ret = p;
+				break;
+			}
+			p = p.parent;
+		}
+		return ret;
+	}
+
 	// =========================================================================
 	// react
 	// =========================================================================

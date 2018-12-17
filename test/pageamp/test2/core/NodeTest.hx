@@ -1,5 +1,6 @@
 package pageamp.test2.core;
 
+import pageamp.web.DomTools.DomTextNode;
 import pageamp.core.Define;
 import pageamp.web.DomTools.DomElement;
 import pageamp.util.BaseNode;
@@ -95,6 +96,10 @@ class TestNode extends Node implements Root {
 	}
 
 	public function createDomElement(tagname:String): DomElement {
+		return null;
+	}
+
+	public function createDomTextNode(text:String): DomTextNode {
 		return null;
 	}
 

@@ -1,5 +1,6 @@
 package pageamp.core;
 
+import pageamp.web.DomTools.DomTextNode;
 import pageamp.react.ValueScope;
 import pageamp.react.ValueContext;
 import pageamp.web.DomTools.DomElement;
@@ -22,6 +23,8 @@ interface Root {
 	public function nextId(): Int;
 
 	public function createDomElement(tagname:String): DomElement;
+
+	public function createDomTextNode(text:String): DomTextNode;
 
 	public function getDefine(name:String): Define;
 
@@ -53,6 +56,10 @@ class RootHelper implements Root {
 	}
 
 	public function createDomElement(tagname:String): DomElement {
+		return null;
+	}
+
+	public function createDomTextNode(text:String): DomTextNode {
 		return null;
 	}
 

@@ -105,6 +105,10 @@ class TestNode extends Node implements Root {
 		return rootHelper.createDomElement(tagname);
 	}
 
+	public function createDomTextNode(text:String): DomTextNode {
+		return rootHelper.createDomTextNode(text);
+	}
+
 	public function getDefine(name:String): Define {
 		return rootHelper.getDefine(name);
 	}

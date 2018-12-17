@@ -124,6 +124,8 @@ class Element extends Node {
 		}
 	}
 
+	// <html><head></head><body data-pa="2"><div data-pa="3" style="display: none;"></div><div data-pa="4">Item 1</div><div data-pa="5">Item 2</div><div data-pa="6">Item 3</div></body></html>
+	// <html><head></head><body data-pa="2"><div data-pa="3" style="display: none;"><div></div></div><div data-pa="5"><div data-pa="6" id="1">Item 1</div></div><div data-pa="7"><div data-pa="8" id="2">Item 2</div></div><div data-pa="9"><div data-pa="10" id="3">Item 3</div></div></body></html>
 	// =========================================================================
 	// private
 	// =========================================================================
@@ -136,8 +138,10 @@ class Element extends Node {
 		makeDomElement();
 		props.get(NAME_PROP) != null ? makeScope() : null;
 		if ((v = props.get(FOREACH_PROP)) != null) {
-			set(FOREACH_PROP, v);
+			set(FOREACH_PROP, props.get(FOREACH_PROP));
 			setHidden(true);
+		} else if (parentWithNonNullProp(FOREACH_PROP) != null) {
+			// nop
 		} else {
 			for (k in props.keys()) {
 				if (!k.startsWith(Node.NODE_PREFIX)) {
