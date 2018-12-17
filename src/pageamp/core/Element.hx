@@ -73,7 +73,8 @@ class Element extends Node {
 		props.remove(NAME_PROP);
 		props.remove(Node.NODE_INDEX);//??
 		props.remove(FOREACH_PROP);
-		props.set2(CLONE_INDEX, null);
+		// ensure the clone's data system is initialized so it has its own data ctx
+		props.set2(DATAPATH_PROP, null);
 		var clone = new Element(cast parent, props);
 		// clones must have their own scope in order to have their own data ctx
 		clone.scope == null ? clone.makeScope() : null;
@@ -275,7 +276,7 @@ class Element extends Node {
 		if (props.exists(FOREACH_PROP)) {
 			initDatabinding();
 			initReplication();
-		} else if (props.exists(DATAPATH_PROP) || props.exists(CLONE_INDEX)) {
+		} else if (props.exists(DATAPATH_PROP)) {
 			initDatabinding();
 		}
 	}
