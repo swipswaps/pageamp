@@ -1,11 +1,12 @@
 package pageamp.test2;
 
-import pageamp.test2.react.ValueTest;
-import pageamp.test2.core.NodeTest;
-import pageamp.test2.core.ElementTest;
-import pageamp.test2.react.ScopeTest;
-import pageamp.web.DomTools.DomDocument;
 import haxe.unit.TestRunner;
+import pageamp.test2.core.ElementTest;
+import pageamp.test2.core.NodeTest;
+import pageamp.test2.data.DataPathTest;
+import pageamp.test2.react.ScopeTest;
+import pageamp.test2.react.ValueTest;
+import pageamp.web.DomTools.DomDocument;
 #if js
 	import js.Browser;
 #elseif php
@@ -20,6 +21,8 @@ class TestAll {
 	public static function main() {
 		new Runner(function(r:Runner) {
 			doc = r.doc;
+			// data
+			r.add(new DataPathTest());
 			// react
 			r.add(new ScopeTest());
 			r.add(new ValueTest());
