@@ -1,5 +1,6 @@
 package pageamp.test2.core;
 
+import pageamp.react.ValueContext;
 import pageamp.core.Define;
 import pageamp.web.DomTools;
 import pageamp.util.BaseNode;
@@ -75,7 +76,7 @@ class NodeTest extends TestCase {
 
 
 class TestNode extends Node implements Root {
-	public var rootHelper = new RootHelper();
+	public var rootHelper = new RootHelper(null);
 	public var staticInits = 0;
 	public var defines = new Map<String, Define>();
 
@@ -114,6 +115,10 @@ class TestNode extends Node implements Root {
 
 	public function getComputedStyle(name:String, ?pseudoElt:String): String {
 		return rootHelper.getComputedStyle(name, pseudoElt);
+	}
+
+	public function getContext(): ValueContext {
+		return scope.context;
 	}
 
 }

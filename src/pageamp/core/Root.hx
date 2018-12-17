@@ -1,5 +1,7 @@
 package pageamp.core;
 
+import pageamp.react.ValueScope;
+import pageamp.react.ValueContext;
 import pageamp.web.DomTools.DomElement;
 import pageamp.util.Set;
 
@@ -27,13 +29,16 @@ interface Root {
 
 	public function getComputedStyle(name:String, ?pseudoElt:String): String;
 
+	public function getContext(): ValueContext;
+
 }
 
 class RootHelper implements Root {
+	var context: ValueContext;
 	var currId = 1;
 	var initializations(default,null) = new Set<String>();
 
-	public function new() {}
+	public function new(context:ValueContext) {}
 
 	public function typeInit(node:Node, cb:Void->Void): Void {
 		var key = Type.getClassName(Type.getClass(node));
@@ -61,6 +66,10 @@ class RootHelper implements Root {
 
 	public function getComputedStyle(name:String, ?pseudoElt:String): String {
 		return '';
+	}
+
+	public function getContext(): ValueContext {
+		return context;
 	}
 
 }

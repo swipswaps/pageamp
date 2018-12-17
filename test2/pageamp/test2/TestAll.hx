@@ -9,28 +9,25 @@ import haxe.unit.TestRunner;
 #if js
 	import js.Browser;
 #elseif php
+	import php.Lib;
 	import php.Web;
 	import htmlparser.HtmlDocument;
 #end
 
 class TestAll {
-#if js
 	static var doc: DomDocument;
-#end
 
 	public static function main() {
-#if js
-		var iframe = Browser.document.createIFrameElement();
-		iframe.onload = function(_) {
-			doc = iframe.contentDocument;
-			run();
-		}
-		iframe.style.opacity = '0';
-		Browser.document.body.appendChild(iframe);
-#elseif php
-		Web.setHeader('Content-type', 'text/plain');
-		run();
-#end
+		new Runner(function(r:Runner) {
+			doc = r.doc;
+			// react
+			r.add(new ScopeTest());
+			r.add(new ValueTest());
+			// core
+			r.add(new NodeTest());
+			r.add(new ElementTest());
+			r.run();
+		});
 	}
 
 	public static function getDoc(): DomDocument {
@@ -42,26 +39,58 @@ class TestAll {
 #end
 	}
 
-	public static function run() {
+}
+
+class Runner extends TestRunner {
+	public var doc: DomDocument;
+
+	public function new(cb:Runner->Void) {
+		super();
 #if js
-		var div = js.Browser.document.getElementById("haxe:trace");
-		TestRunner.print = function(v:Dynamic) {
-			if (div != null) {
-				var s = StringTools.htmlEscape(v+'').split("\n").join("<br/>");
-				div.innerHTML += s;
-			} else {
-				untyped __js__("console").log(v+'');
+		// style
+		var style = Browser.document.createStyleElement();
+		style.innerHTML = 'body {color:#ccc;background:#222;}';
+		Browser.document.head.appendChild(style);
+
+		// create #haxe:trace div
+		var iframe = Browser.document.createIFrameElement();
+		iframe.onload = function(_) {
+			doc = iframe.contentDocument;
+
+			// customize TestRunner.print()
+			var div = js.Browser.document.getElementById("haxe:trace");
+			TestRunner.print = function(v:Dynamic) {
+				if (div != null) {
+					var s = StringTools.htmlEscape(v+'').split("\n").join("<br/>");
+					div.innerHTML += s;
+				} else {
+					untyped __js__("console").log(v+'');
+				}
 			}
+			cb(this);
 		}
+		iframe.style.opacity = '0';
+		Browser.document.body.appendChild(iframe);
+
+#elseif php
+		Lib.println('<html><head><style>body {color:#ccc;background:#222;}'
+		+'</style></head><body><pre>');
+
+		// customize TestRunner.print()
+		TestRunner.print = function(v:Dynamic) {
+			Lib.print(StringTools.htmlEscape(v+''));
+		}
+
+		cb(this);
 #end
-		var r = new TestRunner();
-		// react
-		r.add(new ScopeTest());
-		r.add(new ValueTest());
-		// core
-		r.add(new NodeTest());
-		r.add(new ElementTest());
-		r.run();
+	}
+
+	override public function run(): Bool {
+		var ret = super.run();
+#if php
+		Lib.println('</pre></body></html>');
+#end
+		return ret;
 	}
 
 }

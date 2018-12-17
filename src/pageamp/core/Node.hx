@@ -63,10 +63,10 @@ class Node extends BaseNode {
 		return scope.set(key, val, push);
 	}
 
-	// this forces an update push to dependent values even if val is the same
-	public function force(key:String, val:Dynamic) {
-		//TODO
-	}
+//	// this forces an update push to dependent values even if val is the same
+//	public function force(key:String, val:Dynamic) {
+//		//TODO
+//	}
 
 	public function get(key:String, pull=true): Dynamic {
 		return (scope != null ? scope.get(key, pull) : null);
@@ -148,8 +148,8 @@ class Node extends BaseNode {
 
 	function isDynamicValue(k:String, v:Dynamic) {
 		return v != null
-		&& Std.is(v, String)
-		&& !Value.isConstantExpression(untyped v);
+			&& Std.is(v, String)
+			&& !Value.isConstantExpression(untyped v);
 	}
 
 	// =========================================================================

@@ -110,6 +110,25 @@ class ElementTest extends TestCase {
 		+ '</body></html>', doc.domToString());
 	}
 
+	function testMakeDomElement1() {
+		var doc = TestAll.getDoc();
+		var root = new TestRootElement(doc);
+		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
+		var p = new Element(root, props);
+		new Element(p);
+
+		assertEquals('<html>'
+		+ '<head></head><body><div></div>'
+		+ '</body></html>', doc.domToString());
+
+		props = PropertyTool.set(null, Element.ELEMENT_TAG, 'p');
+		new Element(p, props);
+
+		assertEquals('<html>'
+		+ '<head></head><body><div></div><p></p>'
+		+ '</body></html>', doc.domToString());
+	}
+
 	function testHidden1() {
 		var doc = TestAll.getDoc();
 		var root = new TestRootElement(doc);
@@ -261,6 +280,37 @@ class ElementTest extends TestCase {
 #else
 		+ '<head></head><body data-pa="2" style="">Item 2'
 #end
+		+ '</body></html>', doc.domToString());
+	}
+
+	function testReplication1() {
+		var doc = TestAll.getDoc();
+		var root = new TestRootElement(doc);
+		root.set('data1', new TestDataProvider('<root>
+			<item id="1">Item 1</item>
+			<item id="2">Item 2</item>
+			<item id="3">Item 3</item>
+		</root>'));
+		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
+		props.set(Element.DATAPATH_PROP, 'data1:/root');
+		var p = new Element(root, props);
+		props = PropertyTool.set(null, Element.FOREACH_PROP, 'item');
+		props.set(Element.INNERTEXT_PROP, "$data{text()}");
+		var r = new Element(p, props);
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2">'
+		+ '<div data-pa="3" style="display: none;"></div>'
+		+ '</body></html>', doc.domToString());
+
+		root.refresh();
+
+		assertEquals('<html>'
+		+ '<head></head><body data-pa="2">'
+		+ '<div data-pa="3" style="display: none;"></div>'
+		+ '<div data-pa="4">Item 1</div>'
+		+ '<div data-pa="5">Item 2</div>'
+		+ '<div data-pa="6">Item 3</div>'
 		+ '</body></html>', doc.domToString());
 	}
 

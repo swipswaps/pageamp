@@ -71,8 +71,9 @@ class Element extends Node {
 		var props = this.props.clone();
 		props = props.set(Node.NODE_INDEX, index);
 		props.remove(NAME_PROP);
-		props.remove(Node.NODE_INDEX);
+		props.remove(Node.NODE_INDEX);//??
 		props.remove(FOREACH_PROP);
+		props.set2(CLONE_INDEX, null);
 		var clone = new Element(cast parent, props);
 		// clones must have their own scope in order to have their own data ctx
 		clone.scope == null ? clone.makeScope() : null;
@@ -129,16 +130,19 @@ class Element extends Node {
 	var hidden = false;
 
 	function init2() {
+		var v;
 		super.init();
 		makeDomElement();
 		props.get(NAME_PROP) != null ? makeScope() : null;
-		for (k in props.keys()) {
-			if (!k.startsWith(Node.NODE_PREFIX)) {
-				set(k, props.get(k));
+		if ((v = props.get(FOREACH_PROP)) != null) {
+			set(FOREACH_PROP, v);
+			setHidden(true);
+		} else {
+			for (k in props.keys()) {
+				if (!k.startsWith(Node.NODE_PREFIX)) {
+					set(k, props.get(k));
+				}
 			}
-		}
-		if (props.exists(FOREACH_PROP)) {
-			//TODO: hiding mechanism dom.domSet('style', 'display:none');
 		}
 #if client
 		PropertyTool.set(dom, PAGEAMP_OBJECT, this);
@@ -169,6 +173,20 @@ class Element extends Node {
 			}
 #end
 		}
+	}
+
+	override function wasAdded(logicalParent:BaseNode,
+	                           parent:BaseNode,
+	                           ?i:Int) {
+		if (props.get(ELEMENT_DOM) == null) {
+			var p:DomElement = untyped parent.dom;
+			var b:Node = (i != null ? untyped parent.baseChildren[i] : null);
+			p.domAddChild(dom, b != null ? b.getDomNode() : null);
+		}
+	}
+
+	override function wasRemoved(logicalParent:BaseNode, parent:BaseNode) {
+		dom.domRemove();
 	}
 
 	function getSiblingScopes(?having:String,
@@ -240,7 +258,7 @@ class Element extends Node {
 		name == null ? name = props.get(NAME_PROP) : null;
 		super.makeScope(name);
 		dom.domSet(ID_DOM_ATTRIBUTE, Std.string(id));
-		set('this', scope);
+		set('this', scope).unlink();
 		// node tree
 		set('parentNode', scope.parent).unlink();
 		set('siblingNodes', getSiblingScopes).unlink();
@@ -252,10 +270,14 @@ class Element extends Node {
 		set('delayedSet', scope.delayedSet).unlink();
 		set('sendTo', sendTo).unlink();
 		// dom
-		set('dom', dom);
+		set('dom', dom).unlink();
 		set('computedStyle', getComputedStyle).unlink();
-		initDatabinding();
-		//initReplication();
+		if (props.exists(FOREACH_PROP)) {
+			initDatabinding();
+			initReplication();
+		} else if (props.exists(DATAPATH_PROP) || props.exists(CLONE_INDEX)) {
+			initDatabinding();
+		}
 	}
 
 	override function newValueDelegate(v:Value) {
@@ -296,7 +318,7 @@ class Element extends Node {
 			// possible INNERTEXT_PROP changes.
 			// The normal way would be to explicitly create a Text inside
 			// the Tag, but Texts with dynamic content also create a nested
-			// marker element so the client code can look it up by ID and
+			// marker element so the client code can look it up and
 			// link it to the proper Text. This cannot be used in tags like
 			// <title>, hence this shortcut.
 			//
@@ -471,7 +493,7 @@ class Element extends Node {
 	function dpFn() {
 		// dependencies
 		var ret:Xml = get('__clone_dp');
-		if (ret == null && baseParent != null) {
+		if (ret == null && parent != null) {
 			ret = parent.get('__dp');
 		}
 		var src:String = get(DATAPATH_PROP);
@@ -531,6 +553,130 @@ class Element extends Node {
 			ret = v;
 		}
 		return ret;
+	}
+
+	// =========================================================================
+	// replication
+	// =========================================================================
+	//TODO: add support for cloneAddDelegate() and cloneRemoveDelegate()
+	//in order to allow for add/remove animations
+	public var clones: Array<Node>;
+	#if test
+		public var testCloneAdds = 0;
+		public var testCloneRemoves = 0;
+		public var testCloneRefreshes = 0;
+		public var testCloneUpdates = 0;
+	#end
+
+	#if !debug inline #end
+	function initReplication() {
+		clones = [];
+		scope.setValueFn('__dps', dpsFn);
+	}
+
+	function dpsFn() {
+		var ret:Array<Xml> = null;
+		// dependencies
+		var dp = get('__dp');
+		var src:String = get(FOREACH_PROP);
+
+		// evaluation
+		if (src != null
+			&& Std.is(src,String)
+			&& (src = src.trim()).length > 0) {
+			var exp = currDatapathExp;
+			if (src != currDatapathSrc) {
+				currDatapathSrc = src;
+				exp = currDatapathExp = new DataPath(src, getDatasource);
+			}
+			ret = exp.selectNodes(dp);
+		}
+
+		updateClones(ret);
+
+		if (parent != null && parent.scope != null) {
+			parent.scope.values.get('childrenCount').refresh(true);
+		}
+
+		return ret;
+	}
+
+	//TODO: sorting
+	function updateClones(dnodes:Array<Xml>) {
+		var p:Node = null;
+		var before:Node = null;
+
+		p = get(TARGET_PROP);
+
+		if (p == null) {
+			p = parent;
+			//before = nextSibling();
+			if (clones.length > 0) {
+				before = cast clones[clones.length - 1].getNextSibling();
+			} else {
+				before = cast getNextSibling();
+			}
+		}
+
+		var index = 0;
+		if (dnodes != null) {
+			for (dp in dnodes) {
+				if (index < clones.length) {
+					// reuse existing clone
+					var clone = clones[index];
+					refreshClone(clone, dp, index);
+					#if test
+						testCloneUpdates++;
+					#end
+				} else {
+					// create new clone
+					var clone = addClone(p, before, dp, index);
+					if (clone != null) {
+						clones.push(clone);
+					}
+				}
+				index++;
+			}
+		}
+
+		// remove unused clones
+		while (index < clones.length) {
+			removeClone(clones.pop());
+		}
+	}
+
+	//TODO: use "index" instead of "before"
+	function addClone(parent:Node, before:Node, dp:Xml, ci:Int): Node {
+		var index = (before != null ? before.getIndex() : null);
+		var ret = cloneTo(parent, index);
+		if (Std.is(ret, Element)) {
+			var t:Element = untyped ret;
+			t.props = t.props.set(SOURCE_PROP, id);
+		}
+		if (ret != null) {
+			refreshClone(ret, dp, ci);
+			#if test
+				testCloneAdds++;
+			#end
+		}
+		return ret;
+	}
+
+	function removeClone(clone:Node) {
+		clone.parent.removeChild(clone);
+		#if test
+			testCloneRemoves++;
+		#end
+	}
+
+	function refreshClone(clone:Node, dp:Xml, ci:Int) {
+		clone.scope.clonedScope = true;
+		clone.scope.set('__clone_dp', dp, false).unlink();
+		clone.scope.set(CLONE_INDEX, ci, false).unlink();
+		root.getContext().refresh(clone.scope);
+		#if test
+			testCloneRefreshes++;
+		#end
 	}
 
 }
