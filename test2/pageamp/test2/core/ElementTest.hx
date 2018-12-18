@@ -347,6 +347,63 @@ class ElementTest extends TestCase {
 		+ '</body></html>', doc.domToString());
 	}
 
+	function testNestedReplication1() {
+		var doc = TestAll.getDoc();
+		var root = new TestRootElement(doc);
+		root.set('data1', new TestDataProvider('<root>
+			<item id="1">Item 1</item>
+			<item id="2">Item 2</item>
+			<item id="3">Item 3</item>
+		</root>'));
+		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
+		props.set(Element.DATAPATH_PROP, 'data1:/root');
+		var body = new Element(root, props);
+		props = PropertyTool.set(null, Element.FOREACH_PROP, 'item');
+		var rep1 = new Element(body, props);
+		props = PropertyTool.set(null, Element.FOREACH_PROP, 'data1:/root/item');
+		var rep2 = new Element(rep1, props);
+		props = PropertyTool.set(null, Element.INNERTEXT_PROP, "$data{text()}");
+		props.set('a_id', "$data{@id}");
+		new Element(rep2, props);
+
+		assertEquals('<html><head></head><body data-pa="2">'
+		+ '<div data-pa="3" style="display: none;">'
+			+ '<div data-pa="4" style="display: none;">'
+				+ '<div></div>'
+			+ '</div>'
+		+ '</div>'
+		+ '</body></html>', doc.domToString());
+
+		root.refresh();
+
+		assertEquals('<html><head></head><body data-pa="2">'
+		+ '<div data-pa="3" style="display: none;">'
+			+ '<div data-pa="4" style="display: none;"><div></div></div>'
+			+ '<div data-pa="33"><div data-pa="34"></div></div>'
+			+ '<div data-pa="35"><div data-pa="36"></div></div>'
+			+ '<div data-pa="37"><div data-pa="38"></div></div>'
+		+ '</div>'
+		+ '<div data-pa="6">'
+			+ '<div data-pa="7" style="display: none;"><div data-pa="8"></div></div>'
+			+ '<div data-pa="9"><div data-pa="10" id="1">Item 1</div></div>'
+			+ '<div data-pa="11"><div data-pa="12" id="2">Item 2</div></div>'
+			+ '<div data-pa="13"><div data-pa="14" id="3">Item 3</div></div>'
+		+ '</div>'
+		+ '<div data-pa="15">'
+			+ '<div data-pa="16" style="display: none;"><div data-pa="17"></div></div>'
+			+ '<div data-pa="18"><div data-pa="19" id="1">Item 1</div></div>'
+			+ '<div data-pa="20"><div data-pa="21" id="2">Item 2</div></div>'
+			+ '<div data-pa="22"><div data-pa="23" id="3">Item 3</div></div>'
+		+ '</div>'
+		+ '<div data-pa="24">'
+			+ '<div data-pa="25" style="display: none;"><div data-pa="26"></div></div>'
+			+ '<div data-pa="27"><div data-pa="28" id="1">Item 1</div></div>'
+			+ '<div data-pa="29"><div data-pa="30" id="2">Item 2</div></div>'
+			+ '<div data-pa="31"><div data-pa="32" id="3">Item 3</div></div>'
+		+ '</div>'
+		+ '</body></html>', doc.domToString());
+	}
+
 }
 
 // =============================================================================

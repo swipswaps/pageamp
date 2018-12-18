@@ -67,19 +67,21 @@ class Element extends Node {
 		return dom;
 	}
 
-	override public function cloneTo(parent:Node, ?index:Int): Node {
+	override public function cloneTo(parent:Node, nesting:Int, ?index:Int): Node {
 		var props = this.props.clone();
 		props = props.set(Node.NODE_INDEX, index);
 		props.remove(NAME_PROP);
-		props.remove(Node.NODE_INDEX);//??
-		props.remove(FOREACH_PROP);
+		//props.remove(Node.NODE_INDEX);
+		nesting < 1 ? props.remove(FOREACH_PROP) : null;
 		// ensure the clone's data system is initialized so it has its own data ctx
-		props.set2(DATAPATH_PROP, null);
+		if (!props.exists(DATAPATH_PROP) && !props.exists(FOREACH_PROP)) {
+			props.set2(DATAPATH_PROP, null);
+		}
 		var clone = new Element(cast parent, props);
 		// clones must have their own scope in order to have their own data ctx
 		clone.scope == null ? clone.makeScope() : null;
 		for (child in children) {
-			child.cloneTo(clone);
+			child.cloneTo(clone, nesting + 1);
 		}
 		return clone;
 	}
@@ -124,8 +126,6 @@ class Element extends Node {
 		}
 	}
 
-	// <html><head></head><body data-pa="2"><div data-pa="3" style="display: none;"></div><div data-pa="4">Item 1</div><div data-pa="5">Item 2</div><div data-pa="6">Item 3</div></body></html>
-	// <html><head></head><body data-pa="2"><div data-pa="3" style="display: none;"><div></div></div><div data-pa="5"><div data-pa="6" id="1">Item 1</div></div><div data-pa="7"><div data-pa="8" id="2">Item 2</div></div><div data-pa="9"><div data-pa="10" id="3">Item 3</div></div></body></html>
 	// =========================================================================
 	// private
 	// =========================================================================
@@ -653,7 +653,7 @@ class Element extends Node {
 	//TODO: use "index" instead of "before"
 	function addClone(parent:Node, before:Node, dp:Xml, ci:Int): Node {
 		var index = (before != null ? before.getIndex() : null);
-		var ret = cloneTo(parent, index);
+		var ret = cloneTo(parent, 0, index);
 		if (Std.is(ret, Element)) {
 			var t:Element = untyped ret;
 			t.props = t.props.set(SOURCE_PROP, id);

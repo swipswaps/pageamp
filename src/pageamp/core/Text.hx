@@ -43,7 +43,7 @@ class Text extends Node {
 		return t;
 	}
 
-	override public function cloneTo(parent:Node, ?index:Int): Node {
+	override public function cloneTo(parent:Node, nesting:Int, ?index:Int): Node {
 		var clone = new Text(cast parent, text, plug, this.index);
 		return clone;
 	}
