@@ -58,16 +58,17 @@ class Text extends Node {
 
 	override function init() {
 		super.init();
-		t = node != null ? node : root.createDomTextNode('');
+		t = (node != null ? node : root.createDomTextNode(''));
 	}
 
+	@:access(pageamp.core.Element)
 	override function wasAdded(logicalParent:BaseNode,
 	                           parent:BaseNode,
 	                           ?i:Int) {
 		if (node == null) {
-			var p:DomElement = untyped parent.dom;
-			var b:Node = (i != null ? untyped parent.baseChildren[i] : null);
-			p.domAddChild(t, b != null ? b.getDomNode() : null);
+			var p:Element = cast parent;
+			var b:Node = (i != null ? p.children[i] : null);
+			p.dom.domAddChild(t, b != null ? b.getDomNode() : null);
 		}
 	}
 

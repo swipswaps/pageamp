@@ -398,7 +398,7 @@ class DomTools {
 #if !client
 		//TODO: non dovrebbe fare l'escape di `v`?
 		//t.text = (src != null ? "<!--$" + src + "$-->" + v : v);
-		t.text = (v != null ? v.split('<').join('&lt;') : '');
+		t.text = v.split('<').join('&lt;');
 #else
 		#if entityDecoder
 			v = HtmlEntities.decode(v);
