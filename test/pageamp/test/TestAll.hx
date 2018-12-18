@@ -1,14 +1,15 @@
 package pageamp.test;
 
-import pageamp.test.core.DefineTest;
-import pageamp.test.core.TextTest;
 import haxe.unit.TestRunner;
+import pageamp.test.core.DefineTest;
 import pageamp.test.core.ElementTest;
 import pageamp.test.core.NodeTest;
+import pageamp.test.core.PageTest;
+import pageamp.test.core.TextTest;
 import pageamp.test.data.DataPathTest;
 import pageamp.test.react.ScopeTest;
 import pageamp.test.react.ValueTest;
-import pageamp.web.DomTools.DomDocument;
+import pageamp.web.DomTools;
 #if js
 	import js.Browser;
 #elseif php
@@ -33,13 +34,15 @@ class TestAll {
 			r.add(new ElementTest());
 			r.add(new TextTest());
 			r.add(new DefineTest());
+			r.add(new PageTest());
 			r.run();
 		});
 	}
 
 	public static function getDoc(): DomDocument {
 #if js
-		doc.documentElement.innerHTML = '<html><head></head><body></body></html>';
+		doc.documentElement.innerHTML = '<head></head><body></body>';
+		doc.documentElement.removeAttribute('lang');
 		return doc;
 #elseif php
 		return new HtmlDocument('<html><head></head><body></body></html>');

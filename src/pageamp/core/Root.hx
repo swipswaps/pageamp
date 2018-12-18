@@ -30,7 +30,9 @@ interface Root {
 
 	public function setDefine(name:String, def:Define): Void;
 
-	public function getComputedStyle(name:String, ?pseudoElt:String): String;
+	public function getComputedStyle(e:DomElement,
+	                                 name:String,
+	                                 ?pseudoElt:String): String;
 
 	public function getContext(): ValueContext;
 
@@ -72,7 +74,9 @@ class RootHelper implements Root {
 		defines.set(name, def);
 	}
 
-	public function getComputedStyle(name:String, ?pseudoElt:String): String {
+	public function getComputedStyle(e:DomElement,
+	                                 name:String,
+	                                 ?pseudoElt:String): String {
 		return '';
 	}
 

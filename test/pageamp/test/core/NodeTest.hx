@@ -117,8 +117,10 @@ class TestNode extends Node implements Root {
 		rootHelper.setDefine(name, def);
 	}
 
-	public function getComputedStyle(name:String, ?pseudoElt:String): String {
-		return rootHelper.getComputedStyle(name, pseudoElt);
+	public function getComputedStyle(e:DomElement,
+	                                 name:String,
+	                                 ?pseudoElt:String): String {
+		return rootHelper.getComputedStyle(e, name, pseudoElt);
 	}
 
 	public function getContext(): ValueContext {

@@ -246,8 +246,8 @@ class Element extends Node {
 		}
 	}
 
-	function getComputedStyle(name:String, pseudoElt=''): String {
-		return root.getComputedStyle(name, pseudoElt);
+	function computedStyle(name:String, pseudoElt=''): String {
+		return root.getComputedStyle(dom, name, pseudoElt);
 	}
 
 	#if !debug inline #end
@@ -276,7 +276,7 @@ class Element extends Node {
 		set('sendTo', sendTo).unlink();
 		// dom
 		set('dom', dom).unlink();
-		set('computedStyle', getComputedStyle).unlink();
+		set('computedStyle', computedStyle).unlink();
 		if (props.exists(FOREACH_PROP)) {
 			initDatabinding();
 			initReplication();
