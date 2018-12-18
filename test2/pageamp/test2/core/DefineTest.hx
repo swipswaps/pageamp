@@ -21,7 +21,7 @@ class DefineTest extends TestCase {
 			new Element(p, {n_tag:'b', innerText:"title: ${title}"});
 			new Element(p, {n_tag:'i', innerText:"text: ${text}"});
 		});
-		e = new Element(p, {n_tag:'foo'});
+		e = new Element(p, {n_tag:':foo'});
 		root.refresh();
 		assertEquals('<html>'
 		+ '<head></head><body>'
@@ -44,7 +44,7 @@ class DefineTest extends TestCase {
 			new Element(p, {n_tag:'b', innerText:"title: ${title}"});
 			new Element(p, {n_tag:'i', innerText:"text: ${text}"});
 		});
-		e = new Element(p, {n_tag:'foo', title:'X', text:'Y'});
+		e = new Element(p, {n_tag:':foo', title:'X', text:'Y'});
 		root.refresh();
 		assertEquals('<html>'
 		+ '<head></head><body>'
@@ -72,7 +72,7 @@ class DefineTest extends TestCase {
 			new Element(p, {n_tag:'b', innerText:"title: ${title}"});
 			new Element(p, {n_tag:'i', innerText:"text: ${text}"});
 		});
-		e = new Element(p, {n_tag:'foo'});
+		e = new Element(p, {n_tag:':foo'});
 		root.refresh();
 		assertEquals('<html>'
 		+ '<head></head><body>'
@@ -100,7 +100,7 @@ class DefineTest extends TestCase {
 			new Element(p, {n_tag:'b', innerText:"title: ${title}"});
 			new Element(p, {n_tag:'i', innerText:"text: ${text}"});
 		});
-		e = new Element(p, {n_tag:'foo', title:'X', text:'Y'});
+		e = new Element(p, {n_tag:':foo', title:'X', text:'Y'});
 		root.refresh();
 		assertEquals('<html>'
 		+ '<head></head><body>'
@@ -122,7 +122,7 @@ class DefineTest extends TestCase {
 		new Define(p, {n_def:'item', n_ext:'li'}, function(p:Define) {
 			new Element(p, {n_tag:'span', n_slot:'title'});
 		});
-		e = new Element(p, {n_tag:'item'}, function(p:Element) {
+		e = new Element(p, {n_tag:':item'}, function(p:Element) {
 			new Element(p, {n_tag:'i', n_plug:'title', innerText:'x'});
 		});
 		root.refresh();
@@ -143,7 +143,7 @@ class DefineTest extends TestCase {
 		new Define(p, {n_def:'bold', n_ext:'item'}, function(p:Define) {
 			new Element(p, {n_tag:'b', n_plug:'title', n_slot:'title'});
 		});
-		e = new Element(p, {n_tag:'bold'}, function(p:Element) {
+		e = new Element(p, {n_tag:':bold'}, function(p:Element) {
 			new Element(p, {n_tag:'i', n_plug:'title', innerText:'x'});
 		});
 		root.refresh();

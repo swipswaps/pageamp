@@ -32,6 +32,7 @@ using pageamp.util.PropertyTool;
 	Definition of a custom tag.
 **/
 class Define extends Element {
+	public static var AUTOPREFIX = ':';
 	public static inline var TAGNAME = ':define';
 	public static inline var DEFNAME_PROP = Node.NODE_PREFIX + 'def';
 	public static inline var EXTNAME_PROP = Node.NODE_PREFIX + 'ext';
@@ -61,9 +62,9 @@ class Define extends Element {
 	override function init() {
 		super.init();
 		props.remove(Element.ELEMENT_DOM);
-		var defname = props.getString(DEFNAME_PROP, '_');
+		var defname = AUTOPREFIX + props.getString(DEFNAME_PROP, '_');
 		var extname = props.getString(EXTNAME_PROP, 'div');
-		ext = root.getDefine(extname);
+		ext = root.getDefine(AUTOPREFIX + extname);
 		root.setDefine(defname, this);
 		if (ext != null) {
 			props.remove(Element.NAME_PROP);
