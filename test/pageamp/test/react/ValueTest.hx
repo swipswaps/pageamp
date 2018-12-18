@@ -22,95 +22,92 @@
 
 package pageamp.test.react;
 
+import haxe.unit.TestCase;
 import pageamp.react.Value;
-import pageamp.react.ValueScope;
 import pageamp.react.ValueContext;
-import pageamp.util.Test;
+import pageamp.react.ValueScope;
 
 using pageamp.util.MapTool;
 
-class ValueTest extends Test {
-    var context: ValueContext;
-    var scope: ValueScope;
-
-    public function new(p:Test) {
-	    super(p);
-	    context = new ValueContext();
-	    scope = context.main;
-	}
+class ValueTest extends TestCase {
 
 	public function testValue1() {
-        context.reset();
+        var context = new ValueContext();
+        var scope = context.main;
         var count = 0;
         var v = new Value('foo', null, null, scope, null, function(u,k,v) {
-            assert(v, 'bar');
+            assertEquals('bar', v);
             count++;
         });
-        assert(v.value, 'foo');
-        assert(v.get(), 'foo');
+        assertEquals('foo', v.value);
+        assertEquals('foo', v.get());
         v.set('bar');
-        assert(count, 1);
+        assertEquals(1, count);
 	}
 	
 	public function testValue2() {
-        context.reset();
+        var context = new ValueContext();
+        var scope = context.main;
         var count = 0;
         var v = new Value('foo', null, null, scope, null, function(u,k,v) {
-            assert(v, count == 0 ? 'foo' : 'bar');
+            assertEquals(count == 0 ? 'foo' : 'bar', v);
             count++;
         });
-        assert(v.value, 'foo');
-        assert(v.get(), 'foo');
+        assertEquals('foo', v.value);
+        assertEquals('foo', v.get());
         context.refresh();
-        assert(count, 1);
+        assertEquals(1, count);
         v.set('bar');
-        assert(count, 2);
+        assertEquals(2, count);
 	}
 	
 	public function testValue3() {
-        context.reset();
+        var context = new ValueContext();
+        var scope = context.main;
         var count = 0;
         var v = new Value(1, null, null, scope, null, function(u,k,v) {
-            assert(v, count == 0 ? 1 : 2);
+            assertEquals(count == 0 ? 1 : 2, v);
             count++;
         });
-        assert(v.value, 1);
-        assert(v.get(), 1);
+        assertEquals(1, v.value);
+        assertEquals(1, v.get());
         context.refresh();
-        assert(count, 1);
+        assertEquals(1, count);
         v.set(2);
-        assert(count, 2);
+        assertEquals(2, count);
 	}
 	
 	public function testValue4() {
-        context.reset();
+        var context = new ValueContext();
+        var scope = context.main;
         var count = 0;
         var v = new Value("${'foo'}", null, null, scope, null, function(u,k,v) {
             count++;
         });
-        assert(count, 0);
-        assert(v.value, null);
-        assert(v.get(), null);
+        assertEquals(0, count);
+        assertTrue(v.value == null);
+        assertTrue(v.get() == null);
         
         context.refresh();
-        assert(count, 1);
-        assert(v.value, 'foo');
-        assert(v.get(), 'foo');
+        assertEquals(1, count);
+        assertEquals('foo', v.value);
+        assertEquals('foo', v.get());
         
         v.set('bar');
-        assert(count, 2);
-        assert(v.value, 'bar');
-        assert(v.get(), 'bar');
+        assertEquals(2, count);
+        assertEquals('bar', v.value);
+        assertEquals('bar', v.get());
         
         context.refresh();
-        assert(count, 3);
-        assert(v.value, 'foo');
-        assert(v.get(), 'foo');
+        assertEquals(3, count);
+        assertEquals('foo', v.value);
+        assertEquals('foo', v.get());
 	}
 	
 	public function testDependency1() {
-        context.reset();
-        
+        var context = new ValueContext();
+        var scope = context.main;
+
         var v1Count = 0;
         var v2Count = 0;
         var v1 = new Value(1, 'v1', null, scope, null, function(u,k,v) {
@@ -120,33 +117,34 @@ class ValueTest extends Test {
             v2Count++;
         });
         
-//        assert(context.valueInstances.mapSize(), 2);
-//        assert(context.valueInstances.get(v1.uid), v1);
-//        assert(context.valueInstances.get(v2.uid), v2);
-        assert(context.isRefreshing, false);
-        assert(context.cycle, 0);
-        assert(v1.cycle, 0);
-        assert(v2.cycle, 0);
-        assert(v1Count, 0);
-        assert(v2Count, 0);
-        assert(v1.value, 1);
-        assert(v2.value, null);
+//        assertEquals(2, context.valueInstances.mapSize());
+//        assertEquals(v1, context.valueInstances.get(v1.uid));
+//        assertEquals(v2, context.valueInstances.get(v2.uid));
+        assertFalse(context.isRefreshing);
+        assertEquals(0, context.cycle);
+        assertEquals(0, v1.cycle);
+        assertEquals(0, v2.cycle);
+        assertEquals(0, v1Count);
+        assertEquals(0, v2Count);
+        assertEquals(1, v1.value);
+        assertTrue(v2.value == null);
         
         context.refresh();
         
-        assert(context.isRefreshing, false);
-        assert(context.cycle, 1);
-        assert(v1.cycle, 1);
-        assert(v2.cycle, 1);
-        assert(v1Count, 1);
-        assert(v2Count, 1);
-        assert(v1.value, 1);
-        assert(v2.value, 2);
+        assertFalse(context.isRefreshing);
+        assertEquals(1, context.cycle);
+        assertEquals(1, v1.cycle);
+        assertEquals(1, v2.cycle);
+        assertEquals(1, v1Count);
+        assertEquals(1, v2Count);
+        assertEquals(1, v1.value);
+        assertEquals(2, v2.value);
 	}
 	
 	public function testDependency2() {
-        context.reset();
-        
+        var context = new ValueContext();
+        var scope = context.main;
+
         var v1Count = 0;
         var v2Count = 0;
         var s1 = context.newScope();
@@ -158,28 +156,28 @@ class ValueTest extends Test {
             v2Count++;
         });
         
-//        assert(context.valueInstances.mapSize(), 2);
-//        assert(context.valueInstances.get(v1.uid), v1);
-//        assert(context.valueInstances.get(v2.uid), v2);
-        assert(context.isRefreshing, false);
-        assert(context.cycle, 0);
-        assert(v1.cycle, 0);
-        assert(v2.cycle, 0);
-        assert(v1Count, 0);
-        assert(v2Count, 0);
-        assert(v1.value, 1);
-        assert(v2.value, null);
+//        assertEquals(2, context.valueInstances.mapSize());
+//        assertEquals(v1, context.valueInstances.get(v1.uid));
+//        assertEquals(v2, context.valueInstances.get(v2.uid));
+        assertFalse(context.isRefreshing);
+        assertEquals(0, context.cycle);
+        assertEquals(0, v1.cycle);
+        assertEquals(0, v2.cycle);
+        assertEquals(0, v1Count);
+        assertEquals(0, v2Count);
+        assertEquals(1, v1.value);
+        assertTrue(v2.value == null);
         
         context.refresh();
         
-        assert(context.isRefreshing, false);
-        assert(context.cycle, 1);
-        assert(v1.cycle, 1);
-        assert(v2.cycle, 1);
-        assert(v1Count, 1);
-        assert(v2Count, 1);
-        assert(v1.value, 1);
-        assert(v2.value, 2);
+        assertFalse(context.isRefreshing);
+        assertEquals(1, context.cycle);
+        assertEquals(1, v1.cycle);
+        assertEquals(1, v2.cycle);
+        assertEquals(1, v1Count);
+        assertEquals(1, v2Count);
+        assertEquals(1, v1.value);
+        assertEquals(2, v2.value);
 	}
 
     //TODO: multi-statement values

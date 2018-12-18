@@ -4,9 +4,9 @@
 -js ../www/.pageamptest/client/bin/test.js
 -cp ext
 -cp src
--cp test2
+-cp test
 -D test
--main pageamp.test2.TestAll
+-main pageamp.test.TestAll
 -lib htmlparser
 -lib hscript
 -D client
@@ -18,9 +18,9 @@
 -php ../www/.pageamptest/php
 -cp ext
 -cp src
--cp test2
+-cp test
 -D test
--main pageamp.test2.TestAll
+-main pageamp.test.TestAll
 -lib htmlparser
 -lib hscript
 -D server

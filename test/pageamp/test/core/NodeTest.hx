@@ -1,40 +1,40 @@
-package pageamp.test2.core;
+package pageamp.test.core;
 
-import pageamp.web.DomTools.DomTextNode;
+import pageamp.react.ValueContext;
 import pageamp.core.Define;
-import pageamp.web.DomTools.DomElement;
+import pageamp.web.DomTools;
 import pageamp.util.BaseNode;
-import pageamp.util.PropertyTool;
 import pageamp.core.Root;
+import haxe.unit.TestCase;
 import pageamp.core.Node;
-import pageamp.util.Test;
+import pageamp.util.PropertyTool;
 
-class NodeTest extends Test {
+class NodeTest extends TestCase {
 
 	public function testNodeId() {
 		var n = new TestNode(null);
-		assert(n.id, 1);
+		assertEquals(1, n.id);
 		var n2 = new TestNode(n);
-		assert(n2.id, 2);
+		assertEquals(2, n2.id);
 	}
 
 	public function testNodeScope() {
 		var n = new TestNode(null);
 		// root node always has its own scope
-		assertNotNull(n.getScope(false));
+		assertTrue(n.getScope(false) != null);
 		var n2 = new TestNode(n);
 		// static nodes don't have their own scope
-		assertNull(n2.getScope(false));
+		assertTrue(n2.getScope(false) == null);
 		// but they inherit the outer one
-		assertNotNull(n2.getScope());
+		assertTrue(n2.getScope() != null);
 	}
 
 	public function testNodeInit() {
 		var n = new TestNode(null);
-		assert(n.staticInits, 1);
+		assertEquals(1, n.staticInits);
 		var n2 = new TestNode(n);
 		// TestNode type was inited already
-		assert(n2.staticInits, 0);
+		assertEquals(0, n2.staticInits);
 	}
 
 	public function testNodePlug() {
@@ -43,18 +43,18 @@ class NodeTest extends Test {
 		n1.getSlots().set('default', n2);
 		var n3 = new Node(n1, PropertyTool.set(null, Node.NODE_PLUG, 'default'));
 		// physical parent
-		assert(n3.parent, n2);
+		assertEquals(n2, n3.parent);
 		// logical parent
-		assert(n3.logicalParent, n1);
+		assertEquals(n1, cast n3.logicalParent);
 	}
 
 	public function testNodeIndex() {
 		var n1 = new TestNode(null);
 		var n2 = new Node(n1);
-		assert(n2.getIndex(), 0);
+		assertEquals(0, n2.getIndex());
 		var n3 = new Node(n1, PropertyTool.set(null, Node.NODE_INDEX, 0));
-		assert(n3.getIndex(), 0);
-		assert(n2.getIndex(), 1);
+		assertEquals(0, n3.getIndex());
+		assertEquals(1, n2.getIndex());
 	}
 
 	public function testNodeSlotIndex() {
@@ -62,10 +62,10 @@ class NodeTest extends Test {
 		var n2 = new Node(n1);
 		n1.getSlots().set('default', n2);
 		var n3 = new Node(n1);
-		assert(n3.getIndex(), 0);
+		assertEquals(0, n3.getIndex());
 		var n4 = new Node(n1, PropertyTool.set(null, Node.NODE_INDEX, 0));
-		assert(n4.getIndex(), 0);
-		assert(n3.getIndex(), 1);
+		assertEquals(0, n4.getIndex());
+		assertEquals(1, n3.getIndex());
 	}
 
 }
@@ -74,17 +74,11 @@ class NodeTest extends Test {
 // TestNode
 // =============================================================================
 
+
 class TestNode extends Node implements Root {
-	public var rootHelper = new RootHelper();
+	public var rootHelper = new RootHelper(null);
 	public var staticInits = 0;
-
-	public function typeInit(node:Node, cb:Void->Void): Void {
-		rootHelper.typeInit(node, cb);
-	}
-
-	public function nextId(): Int {
-		return rootHelper.nextId();
-	}
+	public var defines = new Map<String, Define>();
 
 	public function getSlots() {
 		slots == null ? slots = new Map<String, BaseNode>() : null;
@@ -95,16 +89,40 @@ class TestNode extends Node implements Root {
 		staticInits++;
 	}
 
+	// =========================================================================
+	// as Root
+	// =========================================================================
+
+	public function typeInit(node:Node, cb:Void->Void): Void {
+		rootHelper.typeInit(node, cb);
+	}
+
+	public function nextId(): Int {
+		return rootHelper.nextId();
+	}
+
 	public function createDomElement(tagname:String): DomElement {
-		return null;
+		return rootHelper.createDomElement(tagname);
 	}
 
 	public function createDomTextNode(text:String): DomTextNode {
-		return null;
+		return rootHelper.createDomTextNode(text);
+	}
+
+	public function getDefine(name:String): Define {
+		return rootHelper.getDefine(name);
+	}
+
+	public function setDefine(name:String, def:Define): Void {
+		rootHelper.setDefine(name, def);
 	}
 
 	public function getComputedStyle(name:String, ?pseudoElt:String): String {
-		return '';
+		return rootHelper.getComputedStyle(name, pseudoElt);
+	}
+
+	public function getContext(): ValueContext {
+		return scope.context;
 	}
 
 }

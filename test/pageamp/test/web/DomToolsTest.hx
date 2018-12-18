@@ -22,31 +22,11 @@
 
 package pageamp.test.web;
 
-import pageamp.util.Test;
+import haxe.unit.TestCase;
 import pageamp.web.DomTools;
+
 using pageamp.web.DomTools;
 
-class DomToolsTest extends Test {
-
-	public function testTestDoc1() {
-		willDelay();
-	    DomTools.testDoc(null, function(doc:DomDocument, cleanup:TestDocCleanup) {
-    	    var s = doc.domToString();
-    	    assert(s, "<html><head></head><body></body></html>");
-		    cleanup();
-		    didDelay();
-	    });
-	}
-	
-	public function testTestDoc2() {
-	    var html = "<html><head><title>foo</title></head><body></body></html>";
-		willDelay();
-	    html.testDoc(function(doc:DomDocument, cleanup:TestDocCleanup) {
-    	    var s = doc.domToString();
-    	    assert(s, html);
-		    cleanup();
-		    didDelay();
-	    });
-	}
-	
+class DomToolsTest extends TestCase {
+	//TODO
 }

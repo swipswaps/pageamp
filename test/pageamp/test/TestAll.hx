@@ -1,13 +1,13 @@
-package pageamp.test2;
+package pageamp.test;
 
-import pageamp.test2.core.DefineTest;
-import pageamp.test2.core.TextTest;
+import pageamp.test.core.DefineTest;
+import pageamp.test.core.TextTest;
 import haxe.unit.TestRunner;
-import pageamp.test2.core.ElementTest;
-import pageamp.test2.core.NodeTest;
-import pageamp.test2.data.DataPathTest;
-import pageamp.test2.react.ScopeTest;
-import pageamp.test2.react.ValueTest;
+import pageamp.test.core.ElementTest;
+import pageamp.test.core.NodeTest;
+import pageamp.test.data.DataPathTest;
+import pageamp.test.react.ScopeTest;
+import pageamp.test.react.ValueTest;
 import pageamp.web.DomTools.DomDocument;
 #if js
 	import js.Browser;

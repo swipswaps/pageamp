@@ -22,44 +22,37 @@
 
 package pageamp.test.react;
 
-import pageamp.react.ValueScope;
+import haxe.unit.TestCase;
 import pageamp.react.ValueContext;
-import pageamp.util.Test;
 
 using pageamp.web.DomTools;
 
-class ScopeTest extends Test {
-	var context: ValueContext;
-	var scope: ValueScope;
-
-	public function new(p:Test) {
-		super(p);
-		context = new ValueContext();
-		scope = context.main;
-	}
+class ScopeTest extends TestCase {
 
 	public function testScope1() {
-		context.reset();
+		var context = new ValueContext();
+		var scope = context.main;
 		scope.set('v', 3);
-		assert(scope.get('v'), 3);
+		assertEquals(3, scope.get('v'));
 		context.refresh();
-		assert(scope.get('v'), 3);
+		assertEquals(3, scope.get('v'));
 		scope.set('v', 'foo');
-		assert(scope.get('v'), 'foo');
+		assertEquals('foo', scope.get('v'));
 		context.refresh();
-		assert(scope.get('v'), 'foo');
+		assertEquals('foo', scope.get('v'));
 	}
 
 	public function testScope2() {
-		context.reset();
+		var context = new ValueContext();
+		var scope = context.main;
 		scope.set('v', "${3}");
-		assert(scope.get('v'), null);
+		assertTrue(scope.get('v') == null);
 		context.refresh();
-		assert(scope.get('v'), 3);
+		assertEquals(3, scope.get('v'));
 		scope.set('v', 'foo');
-		assert(scope.get('v'), 'foo');
+		assertEquals('foo', scope.get('v'));
 		context.refresh();
-		assert(scope.get('v'), 'foo');
+		assertEquals('foo', scope.get('v'));
 	}
 
 }

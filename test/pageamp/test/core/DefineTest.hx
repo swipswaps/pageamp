@@ -1,7 +1,7 @@
-package pageamp.test2.core;
+package pageamp.test.core;
 
 import pageamp.util.PropertyTool;
-import pageamp.test2.core.ElementTest.TestRootElement;
+import pageamp.test.core.ElementTest.TestRootElement;
 import haxe.unit.TestCase;
 import pageamp.core.*;
 import pageamp.web.DomTools;
