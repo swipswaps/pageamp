@@ -83,7 +83,13 @@ class ValueParser {
 			var tostring = op == EXP_MARKER1_CODE && (sep!='' || i2 < (s.length - 1));
 			sb.add(sep); sep="+"; sb.add("(");
 			var code = StringTools.trim(s.substring(i3, i2));
-			//TODO: trailing ';' and or blanks should be trimmed
+
+			code = ~/(;\s*)$/.replace(code, '');
+			if (code.indexOf(';') >= 0) {
+				// multi-statement expression -> block
+				code = '{$code;}';
+			}
+
 			if (op == DATA_MARKER1_CODE) {
 				var e = StringTools.replace(code, '"', '\\"');
 				sb.add(code.length > 0 ? 'dataGet("$e")' : 'dataGet()');

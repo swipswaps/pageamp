@@ -44,7 +44,7 @@ class ValueTest extends TestCase {
         v.set('bar');
         assertEquals(1, count);
 	}
-	
+
 	public function testValue2() {
         var context = new ValueContext();
         var scope = context.main;
@@ -60,7 +60,7 @@ class ValueTest extends TestCase {
         v.set('bar');
         assertEquals(2, count);
 	}
-	
+
 	public function testValue3() {
         var context = new ValueContext();
         var scope = context.main;
@@ -76,7 +76,7 @@ class ValueTest extends TestCase {
         v.set(2);
         assertEquals(2, count);
 	}
-	
+
 	public function testValue4() {
         var context = new ValueContext();
         var scope = context.main;
@@ -87,23 +87,23 @@ class ValueTest extends TestCase {
         assertEquals(0, count);
         assertTrue(v.value == null);
         assertTrue(v.get() == null);
-        
+
         context.refresh();
         assertEquals(1, count);
         assertEquals('foo', v.value);
         assertEquals('foo', v.get());
-        
+
         v.set('bar');
         assertEquals(2, count);
         assertEquals('bar', v.value);
         assertEquals('bar', v.get());
-        
+
         context.refresh();
         assertEquals(3, count);
         assertEquals('foo', v.value);
         assertEquals('foo', v.get());
 	}
-	
+
 	public function testDependency1() {
         var context = new ValueContext();
         var scope = context.main;
@@ -116,7 +116,7 @@ class ValueTest extends TestCase {
         var v2 = new Value("${v1 + 1}", 'v2', null, scope, null, function(u,k,v) {
             v2Count++;
         });
-        
+
 //        assertEquals(2, context.valueInstances.mapSize());
 //        assertEquals(v1, context.valueInstances.get(v1.uid));
 //        assertEquals(v2, context.valueInstances.get(v2.uid));
@@ -128,9 +128,9 @@ class ValueTest extends TestCase {
         assertEquals(0, v2Count);
         assertEquals(1, v1.value);
         assertTrue(v2.value == null);
-        
+
         context.refresh();
-        
+
         assertFalse(context.isRefreshing);
         assertEquals(1, context.cycle);
         assertEquals(1, v1.cycle);
@@ -140,7 +140,7 @@ class ValueTest extends TestCase {
         assertEquals(1, v1.value);
         assertEquals(2, v2.value);
 	}
-	
+
 	public function testDependency2() {
         var context = new ValueContext();
         var scope = context.main;
@@ -155,7 +155,7 @@ class ValueTest extends TestCase {
         var v2 = new Value("${s1.v1 + 1}", 'v2', null, scope, null, function(u,k,v) {
             v2Count++;
         });
-        
+
 //        assertEquals(2, context.valueInstances.mapSize());
 //        assertEquals(v1, context.valueInstances.get(v1.uid));
 //        assertEquals(v2, context.valueInstances.get(v2.uid));
@@ -167,9 +167,9 @@ class ValueTest extends TestCase {
         assertEquals(0, v2Count);
         assertEquals(1, v1.value);
         assertTrue(v2.value == null);
-        
+
         context.refresh();
-        
+
         assertFalse(context.isRefreshing);
         assertEquals(1, context.cycle);
         assertEquals(1, v1.cycle);
@@ -180,6 +180,25 @@ class ValueTest extends TestCase {
         assertEquals(2, v2.value);
 	}
 
-    //TODO: multi-statement values
+	function testMultiStatementExp1() {
+		var context = new ValueContext();
+		var scope = context.main;
+		var b = new Value("$"+"{'val1'; 'val2'}", null, null, scope);
+		assertTrue(b.value == null);
+		context.refresh();
+		assertEquals('val2', b.value);
+	}
+
+	function testMultiStatementExp2() {
+		var context = new ValueContext();
+		var scope = context.main;
+		var a = new Value("ko", 'a', null, scope);
+		var b = new Value("$"+"{a = 'ok'; 'done'}", null, null, scope);
+		assertEquals('ko', a.value);
+		assertTrue(b.value == null);
+		context.refresh();
+		assertEquals('ok', a.value);
+		assertEquals('done', b.value);
+	}
 
 }
