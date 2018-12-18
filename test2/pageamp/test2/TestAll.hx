@@ -1,5 +1,6 @@
 package pageamp.test2;
 
+import pageamp.test2.core.DefineTest;
 import pageamp.test2.core.TextTest;
 import haxe.unit.TestRunner;
 import pageamp.test2.core.ElementTest;
@@ -31,6 +32,7 @@ class TestAll {
 			r.add(new NodeTest());
 			r.add(new ElementTest());
 			r.add(new TextTest());
+			r.add(new DefineTest());
 			r.run();
 		});
 	}

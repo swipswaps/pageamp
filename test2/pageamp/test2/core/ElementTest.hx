@@ -26,7 +26,7 @@ class ElementTest extends TestCase {
 		var p = new Element(root, props);
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">1&lt;a'
+		+ '<head></head><body>1&lt;a'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -38,7 +38,7 @@ class ElementTest extends TestCase {
 		var p = new Element(root, props);
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2"><p>hi!</p>'
+		+ '<head></head><body><p>hi!</p>'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -62,13 +62,13 @@ class ElementTest extends TestCase {
 		var p = new Element(root, props);
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">'
+		+ '<head></head><body>'
 		+ '</body></html>', doc.domToString());
 
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2" id="my-id">'
+		+ '<head></head><body id="my-id">'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -81,13 +81,13 @@ class ElementTest extends TestCase {
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2" class="class1">'
+		+ '<head></head><body class="class1">'
 		+ '</body></html>', doc.domToString());
 
 		p.set('c_class1', false);
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2" class="">'
+		+ '<head></head><body class="">'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -100,13 +100,13 @@ class ElementTest extends TestCase {
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2" style="color: red;">'
+		+ '<head></head><body style="color: red;">'
 		+ '</body></html>', doc.domToString());
 
 		p.set('s_color', null);
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2" style="">'
+		+ '<head></head><body style="">'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -138,16 +138,16 @@ class ElementTest extends TestCase {
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2" style="color: red;">'
+		+ '<head></head><body style="color: red;">'
 		+ '</body></html>', doc.domToString());
 
 		p.setHidden(true);
 
 		assertEquals('<html>'
 #if !client
-		+ '<head></head><body data-pa="2" style="display: none;">'
+		+ '<head></head><body style="display: none;">'
 #else
-		+ '<head></head><body data-pa="2" style="color: red; display: none;">'
+		+ '<head></head><body style="color: red; display: none;">'
 #end
 		+ '</body></html>', doc.domToString());
 
@@ -155,16 +155,16 @@ class ElementTest extends TestCase {
 
 		assertEquals('<html>'
 #if !client
-		+ '<head></head><body data-pa="2" style="display: none;">'
+		+ '<head></head><body style="display: none;">'
 #else
-		+ '<head></head><body data-pa="2" style="color: blue; display: none;">'
+		+ '<head></head><body style="color: blue; display: none;">'
 #end
 		+ '</body></html>', doc.domToString());
 
 		p.setHidden(false);
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2" style="color: blue;">'
+		+ '<head></head><body style="color: blue;">'
 		+ '</body></html>', doc.domToString());
 
 	}
@@ -184,7 +184,7 @@ class ElementTest extends TestCase {
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">Item 1'
+		+ '<head></head><body>Item 1'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -203,13 +203,13 @@ class ElementTest extends TestCase {
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">Item 1'
+		+ '<head></head><body>Item 1'
 		+ '</body></html>', doc.domToString());
 
 		p.set(Element.DATAPATH_PROP, 'data1:/root/item[2]');
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">Item 2'
+		+ '<head></head><body>Item 2'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -228,13 +228,13 @@ class ElementTest extends TestCase {
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">Item 1'
+		+ '<head></head><body>Item 1'
 		+ '</body></html>', doc.domToString());
 
 		p.set(Element.DATAPATH_PROP, 'data1:/root/item[2]');
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">Item 2'
+		+ '<head></head><body>Item 2'
 		+ '</body></html>', doc.domToString());
 
 		root.set('data1', new TestDataProvider('<root>
@@ -244,7 +244,7 @@ class ElementTest extends TestCase {
 		</root>'));
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">Item B'
+		+ '<head></head><body>Item B'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -263,22 +263,22 @@ class ElementTest extends TestCase {
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">Item 1'
+		+ '<head></head><body>Item 1'
 		+ '</body></html>', doc.domToString());
 
 		p.set(Element.DATAPATH_PROP, 'data1:/root/item[10]');
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2" style="display: none;">'
+		+ '<head></head><body style="display: none;">'
 		+ '</body></html>', doc.domToString());
 
 		p.set(Element.DATAPATH_PROP, 'data1:/root/item[2]');
 
 		assertEquals('<html>'
 #if !client
-		+ '<head></head><body data-pa="2">Item 2'
+		+ '<head></head><body>Item 2'
 #else
-		+ '<head></head><body data-pa="2" style="">Item 2'
+		+ '<head></head><body style="">Item 2'
 #end
 		+ '</body></html>', doc.domToString());
 	}
@@ -299,18 +299,18 @@ class ElementTest extends TestCase {
 		var r = new Element(p, props);
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">'
-		+ '<div data-pa="3" style="display: none;"></div>'
+		+ '<head></head><body>'
+		+ '<div style="display: none;"></div>'
 		+ '</body></html>', doc.domToString());
 
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">'
-		+ '<div data-pa="3" style="display: none;"></div>'
-		+ '<div data-pa="4">Item 1</div>'
-		+ '<div data-pa="5">Item 2</div>'
-		+ '<div data-pa="6">Item 3</div>'
+		+ '<head></head><body>'
+		+ '<div style="display: none;"></div>'
+		+ '<div>Item 1</div>'
+		+ '<div>Item 2</div>'
+		+ '<div>Item 3</div>'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -332,18 +332,18 @@ class ElementTest extends TestCase {
 		new Element(r, props);
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">'
-		+ '<div data-pa="3" style="display: none;"><div></div></div>'
+		+ '<head></head><body>'
+		+ '<div style="display: none;"><div></div></div>'
 		+ '</body></html>', doc.domToString());
 
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">'
-		+ '<div data-pa="3" style="display: none;"><div></div></div>'
-		+ '<div data-pa="5"><div data-pa="6" id="1">Item 1</div></div>'
-		+ '<div data-pa="7"><div data-pa="8" id="2">Item 2</div></div>'
-		+ '<div data-pa="9"><div data-pa="10" id="3">Item 3</div></div>'
+		+ '<head></head><body>'
+		+ '<div style="display: none;"><div></div></div>'
+		+ '<div><div id="1">Item 1</div></div>'
+		+ '<div><div id="2">Item 2</div></div>'
+		+ '<div><div id="3">Item 3</div></div>'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -366,9 +366,9 @@ class ElementTest extends TestCase {
 		props.set('a_id', "$data{@id}");
 		new Element(rep2, props);
 
-		assertEquals('<html><head></head><body data-pa="2">'
-		+ '<div data-pa="3" style="display: none;">'
-			+ '<div data-pa="4" style="display: none;">'
+		assertEquals('<html><head></head><body>'
+		+ '<div style="display: none;">'
+			+ '<div style="display: none;">'
 				+ '<div></div>'
 			+ '</div>'
 		+ '</div>'
@@ -376,30 +376,30 @@ class ElementTest extends TestCase {
 
 		root.refresh();
 
-		assertEquals('<html><head></head><body data-pa="2">'
-		+ '<div data-pa="3" style="display: none;">'
-			+ '<div data-pa="4" style="display: none;"><div></div></div>'
-			+ '<div data-pa="33"><div data-pa="34"></div></div>'
-			+ '<div data-pa="35"><div data-pa="36"></div></div>'
-			+ '<div data-pa="37"><div data-pa="38"></div></div>'
+		assertEquals('<html><head></head><body>'
+		+ '<div style="display: none;">'
+			+ '<div style="display: none;"><div></div></div>'
+			+ '<div><div></div></div>'
+			+ '<div><div></div></div>'
+			+ '<div><div></div></div>'
 		+ '</div>'
-		+ '<div data-pa="6">'
-			+ '<div data-pa="7" style="display: none;"><div data-pa="8"></div></div>'
-			+ '<div data-pa="9"><div data-pa="10" id="1">Item 1</div></div>'
-			+ '<div data-pa="11"><div data-pa="12" id="2">Item 2</div></div>'
-			+ '<div data-pa="13"><div data-pa="14" id="3">Item 3</div></div>'
+		+ '<div>'
+			+ '<div style="display: none;"><div></div></div>'
+			+ '<div><div id="1">Item 1</div></div>'
+			+ '<div><div id="2">Item 2</div></div>'
+			+ '<div><div id="3">Item 3</div></div>'
 		+ '</div>'
-		+ '<div data-pa="15">'
-			+ '<div data-pa="16" style="display: none;"><div data-pa="17"></div></div>'
-			+ '<div data-pa="18"><div data-pa="19" id="1">Item 1</div></div>'
-			+ '<div data-pa="20"><div data-pa="21" id="2">Item 2</div></div>'
-			+ '<div data-pa="22"><div data-pa="23" id="3">Item 3</div></div>'
+		+ '<div>'
+			+ '<div style="display: none;"><div></div></div>'
+			+ '<div><div id="1">Item 1</div></div>'
+			+ '<div><div id="2">Item 2</div></div>'
+			+ '<div><div id="3">Item 3</div></div>'
 		+ '</div>'
-		+ '<div data-pa="24">'
-			+ '<div data-pa="25" style="display: none;"><div data-pa="26"></div></div>'
-			+ '<div data-pa="27"><div data-pa="28" id="1">Item 1</div></div>'
-			+ '<div data-pa="29"><div data-pa="30" id="2">Item 2</div></div>'
-			+ '<div data-pa="31"><div data-pa="32" id="3">Item 3</div></div>'
+		+ '<div>'
+			+ '<div style="display: none;"><div></div></div>'
+			+ '<div><div id="1">Item 1</div></div>'
+			+ '<div><div id="2">Item 2</div></div>'
+			+ '<div><div id="3">Item 3</div></div>'
 		+ '</div>'
 		+ '</body></html>', doc.domToString());
 	}

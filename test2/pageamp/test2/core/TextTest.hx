@@ -39,7 +39,7 @@ class TextTest extends TestCase {
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">Item 1'
+		+ '<head></head><body>Item 1'
 		+ '</body></html>', doc.domToString());
 	}
 
@@ -59,18 +59,18 @@ class TextTest extends TestCase {
 		new Text(r, "$data{text()}");
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">'
-		+ '<div data-pa="3" style="display: none;"></div>'
+		+ '<head></head><body>'
+		+ '<div style="display: none;"></div>'
 		+ '</body></html>', doc.domToString());
 
 		root.refresh();
 
 		assertEquals('<html>'
-		+ '<head></head><body data-pa="2">'
-		+ '<div data-pa="3" style="display: none;"></div>'
-		+ '<div data-pa="5">Item 1</div>'
-		+ '<div data-pa="8">Item 2</div>'
-		+ '<div data-pa="11">Item 3</div>'
+		+ '<head></head><body>'
+		+ '<div style="display: none;"></div>'
+		+ '<div>Item 1</div>'
+		+ '<div>Item 2</div>'
+		+ '<div>Item 3</div>'
 		+ '</body></html>', doc.domToString());
 	}
 

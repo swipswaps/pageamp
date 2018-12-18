@@ -262,7 +262,7 @@ class Element extends Node {
 	override public function makeScope(?name:String) {
 		name == null ? name = props.get(NAME_PROP) : null;
 		super.makeScope(name);
-		dom.domSet(ID_DOM_ATTRIBUTE, Std.string(id));
+		//dom.domSet(ID_DOM_ATTRIBUTE, Std.string(id));
 		set('this', scope).unlink();
 		// node tree
 		set('parentNode', scope.parent).unlink();

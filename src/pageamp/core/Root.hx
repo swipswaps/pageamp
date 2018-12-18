@@ -40,6 +40,7 @@ class RootHelper implements Root {
 	var context: ValueContext;
 	var currId = 1;
 	var initializations(default,null) = new Set<String>();
+	var defines = new Map<String, Define>();
 
 	public function new(context:ValueContext) {}
 
@@ -64,11 +65,11 @@ class RootHelper implements Root {
 	}
 
 	public function getDefine(name:String): Define {
-		return null;
+		return defines.get(name);
 	}
 
 	public function setDefine(name:String, def:Define): Void {
-		// nop
+		defines.set(name, def);
 	}
 
 	public function getComputedStyle(name:String, ?pseudoElt:String): String {
