@@ -25,6 +25,21 @@ class Head extends Element {
 		initCssApi();
 	}
 
+	function makeShadow(x='0px', y='0px', radius='0px', col='#000') {
+		//TODO: old IEs
+		return '-moz-box-shadow:$x $y $radius $col;'
+			+ '-webkit-box-shadow:$x $y $radius $col;'
+			+ '-box-shadow:$x $y $radius $col;'
+			+ 'box-shadow:$x $y $radius $col;';
+	}
+
+	function makeInsetShadow(x=0, y=0, r=4, col='#000') {
+		return '-moz-box-shadow:${x}px ${y}px ${r}px $col inset;\n'
+			+ '-webkit-box-shadow:${x}px ${y}px ${r}px $col inset;\n'
+			+ '-box-shadow:${x}px ${y}px ${r}px $col inset;\n'
+			+ 'box-shadow:${x}px ${y}px ${r}px $col inset';
+	}
+
 	// =========================================================================
 	// CSS API
 	// =========================================================================
@@ -88,20 +103,9 @@ class Head extends Element {
 
 		// ...drop-shadow-with-css-for-all-web-browsers
 		// https://tinyurl.com/yckn4rk
-		set('cssMakeShadow', function(x='0px', y='0px', radius='0px', col='#000') {
-			//TODO: old IEs
-			return '-moz-box-shadow:$x $y $radius $col;'
-			+ '-webkit-box-shadow:$x $y $radius $col;'
-			+ '-box-shadow:$x $y $radius $col;'
-			+ 'box-shadow:$x $y $radius $col;';
-		}).unlink();
+		set('cssMakeShadow', makeShadow).unlink();
 
-		set('cssMakeInsetShadow', function(x=0, y=0, r=4, col='#000') {
-			return '-moz-box-shadow:${x}px ${y}px ${r}px $col inset;\n'
-			+ '-webkit-box-shadow:${x}px ${y}px ${r}px $col inset;\n'
-			+ '-box-shadow:${x}px ${y}px ${r}px $col inset;\n'
-			+ 'box-shadow:${x}px ${y}px ${r}px $col inset';
-		}).unlink();
+		set('cssMakeInsetShadow', makeInsetShadow).unlink();
 
 		set('cssFullRgb', ColorTools.fullRgb).unlink();
 		set('cssColor2Components', ColorTools.color2Components).unlink();

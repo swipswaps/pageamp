@@ -5,6 +5,7 @@ import pageamp.core.Element;
 import pageamp.core.Head;
 import pageamp.test.core.ElementTest;
 
+using StringTools;
 using pageamp.web.DomTools;
 
 class HeadTest extends TestCase {
@@ -51,7 +52,7 @@ class HeadTest extends TestCase {
 		+ '<link rel="stylesheet" type="text/css"'
 		+ ' href="https://fonts.googleapis.com/css?family=Lato:400,700">'
 		+ '<style>body {font-family:"Lato";} </style>'
-		+ '</head><body></body></html>', root.doc.domToString());
+		+ '</head><body></body></html>', norm(root.doc.domToString()));
 	}
 
 	function testHeadApiMakeSelectable() {
@@ -89,16 +90,16 @@ class HeadTest extends TestCase {
 		var head = new Head(root);
 		var s = new Element(head, {
 			n_tag: 'style',
-			innerText: "body {${cssMakeVGradient()}} ",
+			innerText: "body {${cssMakeVGradient('#222', '#444')}} ",
 		});
 		root.refresh();
 		assertEquals('<html><head>'
-		+ '<style>body {background-color:undefined;'
-		+ 'filter:progid:DXImageTransform.Microsoft.gradient'
-		+ "(startColorstr='undefined', endColorstr='undefined');"
-		+ 'background:-webkit-gradient'
-		+ '(linear, left top, left bottom, from(undefined), to(undefined));'
-		+ 'background:-moz-linear-gradient(top, undefined, undefined);} </style>'
+		+ "<style>body {background-color:#222222;"
+		+ "filter:progid:DXImageTransform.Microsoft.gradient"
+		+ "(startColorstr='#222222', endColorstr='#444444');"
+		+ "background:-webkit-gradient"
+		+ "(linear, left top, left bottom, from(#222222), to(#444444));"
+		+ "background:-moz-linear-gradient(top, #222222, #444444);} </style>"
 		+ '</head><body></body></html>', root.doc.domToString());
 	}
 
@@ -324,6 +325,9 @@ class HeadTest extends TestCase {
 	// util
 	// =========================================================================
 
-	function norm(s:String) return ~/(\s+)/g.replace(s, ' ');
+	function norm(s:String) {
+		s = ~/(\s+)/g.replace(s, ' ');
+		return s.replace(' />', '>');
+	}
 
 }
