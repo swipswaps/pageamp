@@ -8,6 +8,7 @@ import haxe.unit.TestCase;
 using pageamp.web.DomTools;
 using pageamp.util.PropertyTool;
 
+@:access(pageamp.core.Element)
 class PageTest extends TestCase {
 
 	function testPage1() {
@@ -59,6 +60,13 @@ class PageTest extends TestCase {
 		});
 		assertEquals('<html><head></head>'
 		+ '<body><div>v: bar</div></body></html>', p.doc.domToString());
+	}
+
+	function testPageHead() {
+		var p = new Page(TestAll.getDoc());
+		assertTrue(p.head != null);
+		assertEquals(p.head.dom, p.getDocument().domGetHead());
+		assertEquals(p.get('head'), p.head.scope);
 	}
 
 }

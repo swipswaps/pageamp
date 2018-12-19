@@ -101,8 +101,15 @@ class TestNode extends Node implements Root {
 		return rootHelper.nextId();
 	}
 
-	public function createDomElement(tagname:String): DomElement {
-		return rootHelper.createDomElement(tagname);
+	public function getDocument(): DomDocument {
+		return null;
+	}
+
+	public function createDomElement(name:String,
+	                                 ?props:Props,
+	                                 ?parent:DomElement,
+	                                 ?before:DomNode): DomElement {
+		return rootHelper.createDomElement(name, props, parent, before);
 	}
 
 	public function createDomTextNode(text:String): DomTextNode {

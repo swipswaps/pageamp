@@ -420,8 +420,23 @@ class TestRootElement extends TestNode {
 		super(null);
 	}
 
-	override public function createDomElement(tagname:String): DomElement {
-		return doc.domCreateElement(tagname);
+	override
+	public function getDocument(): DomDocument {
+		return doc;
+	}
+
+	override
+	public function createDomElement(name:String,
+	                                 ?props:Props,
+	                                 ?parent:DomElement,
+	                                 ?before:DomNode): DomElement {
+		var ret = doc.domCreateElement(name);
+		for (k in props.keys()) {
+			var v = props.get(k);
+			v != null ? ret.domSet(k, Std.string(v)) : null;
+		}
+		parent != null ? parent.domAddChild(ret, before) : null;
+		return ret;
 	}
 
 	override public function createDomTextNode(text:String): DomTextNode {

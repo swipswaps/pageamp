@@ -3,6 +3,7 @@ package pageamp.test;
 import haxe.unit.TestRunner;
 import pageamp.test.core.DefineTest;
 import pageamp.test.core.ElementTest;
+import pageamp.test.core.HeadTest;
 import pageamp.test.core.NodeTest;
 import pageamp.test.core.PageTest;
 import pageamp.test.core.TextTest;
@@ -35,6 +36,7 @@ class TestAll {
 			r.add(new TextTest());
 			r.add(new DefineTest());
 			r.add(new PageTest());
+			r.add(new HeadTest());
 			r.run();
 		});
 	}

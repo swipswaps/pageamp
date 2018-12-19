@@ -15,6 +15,7 @@ using pageamp.web.DomTools;
 class Page extends Element implements Root {
 	public static inline var PAGE_LANG = Element.ATTRIBUTE_PREFIX + 'lang';
 	public var doc: DomDocument;
+	public var head: Head;
 
 	public function new(doc:DomDocument, ?props:Props, ?cb:Dynamic->Void) {
 		this.doc = doc;
@@ -40,8 +41,21 @@ class Page extends Element implements Root {
 		return currId++;
 	}
 
-	public function createDomElement(tagname:String): DomElement {
-		return doc.domCreateElement(tagname);
+	public function getDocument(): DomDocument {
+		return doc;
+	}
+
+	public function createDomElement(name:String,
+	                                 ?props:Props,
+	                                 ?parent:DomElement,
+	                                 ?before:DomNode): DomElement {
+		var ret = doc.domCreateElement(name);
+		for (k in props.keys()) {
+			var v = props.get(k);
+			v != null ? ret.domSet(k, Std.string(v)) : null;
+		}
+		parent != null ? parent.domAddChild(ret, before) : null;
+		return ret;
 	}
 
 	public function createDomTextNode(text:String): DomTextNode {
@@ -78,6 +92,11 @@ class Page extends Element implements Root {
 	var currId = 1;
 	var initializations(default,null) = new Set<String>();
 	var defines = new Map<String, Define>();
+
+	override function init() {
+		super.init();
+		head = new Head(this);
+	}
 
 	override function isDynamicValue(k:String, v:Dynamic): Bool {
 		return k == PAGE_LANG ? true : super.isDynamicValue(k, v);
