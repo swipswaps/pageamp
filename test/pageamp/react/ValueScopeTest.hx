@@ -20,13 +20,39 @@
  * SOFTWARE.
  */
 
-package pageamp.test.web;
+package pageamp.react;
 
 import haxe.unit.TestCase;
-import pageamp.web.DomTools;
+import pageamp.react.ValueContext;
 
 using pageamp.web.DomTools;
 
-class DomToolsTest extends TestCase {
-	//TODO
+class ValueScopeTest extends TestCase {
+
+	public function testScope1() {
+		var context = new ValueContext();
+		var scope = context.main;
+		scope.set('v', 3);
+		assertEquals(3, scope.get('v'));
+		context.refresh();
+		assertEquals(3, scope.get('v'));
+		scope.set('v', 'foo');
+		assertEquals('foo', scope.get('v'));
+		context.refresh();
+		assertEquals('foo', scope.get('v'));
+	}
+
+	public function testScope2() {
+		var context = new ValueContext();
+		var scope = context.main;
+		scope.set('v', "${3}");
+		assertTrue(scope.get('v') == null);
+		context.refresh();
+		assertEquals(3, scope.get('v'));
+		scope.set('v', 'foo');
+		assertEquals('foo', scope.get('v'));
+		context.refresh();
+		assertEquals('foo', scope.get('v'));
+	}
+
 }

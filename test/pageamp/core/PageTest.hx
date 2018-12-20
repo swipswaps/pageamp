@@ -1,4 +1,4 @@
-package pageamp.test.core;
+package pageamp.core;
 
 import pageamp.core.Body;
 import pageamp.core.Head;

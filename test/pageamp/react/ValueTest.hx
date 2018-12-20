@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package pageamp.test.react;
+package pageamp.react;
 
 import haxe.unit.TestCase;
 import pageamp.react.Value;

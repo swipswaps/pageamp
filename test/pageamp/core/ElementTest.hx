@@ -1,10 +1,10 @@
-package pageamp.test.core;
+package pageamp.core;
 
 import pageamp.web.URL;
 import pageamp.data.DataProvider;
 import haxe.unit.TestCase;
 import pageamp.core.Element;
-import pageamp.test.core.NodeTest.TestNode;
+import pageamp.core.NodeTest.TestNode;
 import pageamp.util.PropertyTool;
 import pageamp.web.DomTools;
 

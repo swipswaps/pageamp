@@ -1,9 +1,9 @@
-package pageamp.test.core;
+package pageamp.core;
 
 import haxe.unit.TestCase;
 import pageamp.core.Element;
 import pageamp.core.Head;
-import pageamp.test.core.ElementTest;
+import pageamp.core.ElementTest;
 
 using StringTools;
 using pageamp.web.DomTools;

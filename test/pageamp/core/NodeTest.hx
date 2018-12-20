@@ -1,4 +1,4 @@
-package pageamp.test.core;
+package pageamp.core;
 
 import pageamp.react.ValueContext;
 import pageamp.core.Define;

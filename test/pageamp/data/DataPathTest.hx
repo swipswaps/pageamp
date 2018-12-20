@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package pageamp.test.data;
+package pageamp.data;
 
 import pageamp.web.URL;
 import pageamp.data.DataProvider;

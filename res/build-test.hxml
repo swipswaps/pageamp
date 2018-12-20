@@ -6,7 +6,7 @@
 -cp src
 -cp test
 -D test
--main pageamp.test.TestAll
+-main pageamp.TestAll
 -lib htmlparser
 -lib hscript
 -D client
@@ -20,7 +20,7 @@
 -cp src
 -cp test
 -D test
--main pageamp.test.TestAll
+-main pageamp.TestAll
 -lib htmlparser
 -lib hscript
 -D server

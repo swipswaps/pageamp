@@ -1,18 +1,18 @@
-package pageamp.test;
+package pageamp;
 
-import pageamp.test.server.HtmlParserTest;
-import pageamp.test.server.OutputTest;
-import pageamp.test.server.LoaderTest;
+import pageamp.server.PreprocessorParserTest;
+import pageamp.server.OutputTest;
+import pageamp.server.LoaderTest;
 import haxe.unit.TestRunner;
-import pageamp.test.core.DefineTest;
-import pageamp.test.core.ElementTest;
-import pageamp.test.core.HeadTest;
-import pageamp.test.core.NodeTest;
-import pageamp.test.core.PageTest;
-import pageamp.test.core.TextTest;
-import pageamp.test.data.DataPathTest;
-import pageamp.test.react.ScopeTest;
-import pageamp.test.react.ValueTest;
+import pageamp.core.DefineTest;
+import pageamp.core.ElementTest;
+import pageamp.core.HeadTest;
+import pageamp.core.NodeTest;
+import pageamp.core.PageTest;
+import pageamp.core.TextTest;
+import pageamp.data.DataPathTest;
+import pageamp.react.ValueScopeTest;
+import pageamp.react.ValueTest;
 import pageamp.web.DomTools;
 #if js
 	import js.Browser;
@@ -31,7 +31,7 @@ class TestAll {
 			// data
 			r.add(new DataPathTest());
 			// react
-			r.add(new ScopeTest());
+			r.add(new ValueScopeTest());
 			r.add(new ValueTest());
 			// core
 			r.add(new NodeTest());
@@ -41,7 +41,7 @@ class TestAll {
 			r.add(new PageTest());
 			r.add(new HeadTest());
 			// server
-			r.add(new HtmlParserTest());
+			r.add(new PreprocessorParserTest());
 			r.add(new LoaderTest());
 			r.add(new OutputTest());
 			r.run();

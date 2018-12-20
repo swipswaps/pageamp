@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package pageamp.test.server;
+package pageamp.server;
 
 import haxe.unit.TestCase;
 import htmlparser.HtmlDocument;
