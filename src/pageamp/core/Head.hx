@@ -21,6 +21,7 @@ class Head extends Element {
 	override function init() {
 		var e = root.getDocument().domGetHead();
 		e != null ? props = props.set(Element.ELEMENT_DOM, e) : null;
+		Std.is(parent, Page) ? cast(parent, Page).head = this : null;
 		super.init();
 		initCssApi();
 	}

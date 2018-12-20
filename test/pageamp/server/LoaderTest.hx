@@ -26,6 +26,7 @@ import haxe.unit.TestCase;
 import htmlparser.HtmlDocument;
 import pageamp.server.Loader;
 
+using pageamp.util.PropertyTool;
 using pageamp.web.DomTools;
 
 class LoaderTest extends TestCase {
@@ -55,6 +56,68 @@ class LoaderTest extends TestCase {
 		var out = dst.domToString();
 		assertEquals('<html lang="es"><head></head>'
 		+ '<body id="1"></body></html>', out);
+	}
+
+	function testNativeAttribute1() {
+		var src = new HtmlDocument('<html><head></head>'
+		+ '<body class="app"></body></html>');
+		var dst = TestAll.getDoc();
+		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
+		var out = dst.domToString();
+		assertEquals('<html><head></head>'
+		+ '<body class="app"></body></html>', out);
+	}
+
+	function testLogicAttribute1() {
+		var src = new HtmlDocument('<html><head></head>'
+		+ '<body :class="app" class="$'+'{class} main"></body></html>');
+		var dst = TestAll.getDoc();
+		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
+		var out = dst.domToString();
+		assertEquals('<html><head></head>'
+		+ '<body class="app main"></body></html>', out);
+	}
+
+	function testNamedClassAttribute1() {
+		var src = new HtmlDocument('<html><head></head>'
+		+ '<body :c-app></body></html>');
+		var dst = TestAll.getDoc();
+		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
+		var out = dst.domToString();
+		assertEquals('<html><head></head>'
+		+ '<body class="app"></body></html>', out);
+	}
+
+	function testNamedStyleAttribute1() {
+		var src = new HtmlDocument('<html><head></head>'
+		+ '<body :s-color="red"></body></html>');
+		var dst = TestAll.getDoc();
+		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
+		var out = dst.domToString();
+		assertEquals('<html><head></head>'
+		+ '<body style="color: red;"></body></html>', out);
+	}
+
+	function testEventAttribute1() {
+		var src = new HtmlDocument('<html><head></head>'
+		+ '<body :ev-click="$'+'{log(ev)}"></body></html>');
+		var dst = TestAll.getDoc();
+		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
+		var out = dst.domToString();
+		assertEquals('<html><head></head>'
+		+ '<body></body></html>', out);
+		assertTrue(pag.body.props.get('ev_click') != null);
+	}
+
+	function testHandlerAttribute1() {
+		var src = new HtmlDocument('<html><head></head>'
+		+ '<body :on-x="$'+'{log(x)}"></body></html>');
+		var dst = TestAll.getDoc();
+		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
+		var out = dst.domToString();
+		assertEquals('<html><head></head>'
+		+ '<body></body></html>', out);
+		assertTrue(pag.body.props.get('on_x') != null);
 	}
 
 	function testDefine1() {

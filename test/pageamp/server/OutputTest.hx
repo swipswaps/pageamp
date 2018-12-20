@@ -15,8 +15,8 @@ class OutputTest extends TestCase {
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
 		Output.addIds(pag);
-		assertEquals('<html lang="es"><head data-pa="3"></head>'
-		+ '<body data-pa="4"></body></html>', dst.domToString());
+		assertEquals('<html lang="es"><head data-pa="2"></head>'
+		+ '<body data-pa="3"></body></html>', dst.domToString());
 	}
 
 }

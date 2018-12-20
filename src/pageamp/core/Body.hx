@@ -31,6 +31,7 @@ class Body extends Element {
 		var e = root.getDocument().domGetBody();
 		e != null ? props = props.set(Element.ELEMENT_DOM, e) : null;
 		super.init();
+		Std.is(parent, Page) ? cast(parent, Page).body = this : null;
 	}
 
 }

@@ -23,9 +23,13 @@ class Element extends Node {
 	public static inline var ID_DOM_ATTRIBUTE = 'data-pa';
 	public static inline var ATTRIBUTE_PREFIX = 'a_';
 	public static inline var CLASS_PREFIX = 'c_';
+	public static inline var CLASS_PREFIX2 = ':c-';
 	public static inline var STYLE_PREFIX = 's_';
+	public static inline var STYLE_PREFIX2 = ':s-';
 	public static inline var EVENT_PREFIX = 'ev_';
+	public static inline var EVENT_PREFIX2 = ':ev-';
 	public static inline var HANDLER_PREFIX = 'on_';
+	public static inline var HANDLER_PREFIX2 = ':on-';
 	// static attributes
 	public static inline var ELEMENT_DOM = Node.NODE_PREFIX + 'dom';
 	public static inline var ELEMENT_TAG = Node.NODE_PREFIX + 'tag';

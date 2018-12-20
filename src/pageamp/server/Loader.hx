@@ -114,10 +114,16 @@ class Loader {
 				continue;
 			}
 			var val = a.value;
-			if (key.startsWith(Element.CLASS_PREFIX) && val == null) {
-				val = '1';
-			}
-			if (key.startsWith(':')) {
+			if (key.startsWith(Element.CLASS_PREFIX2)) {
+				key = Element.CLASS_PREFIX + key.substr(Element.CLASS_PREFIX2.length);
+				val == null ? val = '1' : null;
+			} else if (key.startsWith(Element.STYLE_PREFIX2)) {
+				key = Element.STYLE_PREFIX + key.substr(Element.STYLE_PREFIX2.length);
+			} else if (key.startsWith(Element.EVENT_PREFIX2)) {
+				key = Element.EVENT_PREFIX + key.substr(Element.EVENT_PREFIX2.length);
+			} else if (key.startsWith(Element.HANDLER_PREFIX2)) {
+				key = Element.HANDLER_PREFIX + key.substr(Element.HANDLER_PREFIX2.length);
+			} else if (key.startsWith(':')) {
 				key = key.substr(1);
 			} else if (!~/^\w_/.match(key)) {
 				key = Element.ATTRIBUTE_PREFIX + key;

@@ -42,11 +42,14 @@ class Page extends Element implements Root {
 	public static inline var PAGE_LANG = Element.ATTRIBUTE_PREFIX + 'lang';
 	public var doc: DomDocument;
 	public var head: Head;
+	public var body: Body;
 
 	public function new(doc:DomDocument, ?props:Props, ?cb:Dynamic->Void) {
 		this.doc = doc;
 		props = props.set(Element.ELEMENT_DOM, doc.domGetBody());
 		super(null, props, cb);
+		head == null ? head = new Head(this) : null;
+		body == null ? body = new Body(this) : null;
 		set('pageInit', true);
 		scope.context.refresh();
 	}
@@ -118,11 +121,6 @@ class Page extends Element implements Root {
 	var currId = 1;
 	var initializations(default,null) = new Set<String>();
 	var defines = new Map<String, Define>();
-
-	override function init() {
-		super.init();
-		head = new Head(this);
-	}
 
 	override function isDynamicValue(k:String, v:Dynamic): Bool {
 		return k == PAGE_LANG ? true : super.isDynamicValue(k, v);
