@@ -1,5 +1,8 @@
 package pageamp.test;
 
+import pageamp.test.server.HtmlParserTest;
+import pageamp.test.server.OutputTest;
+import pageamp.test.server.LoaderTest;
 import haxe.unit.TestRunner;
 import pageamp.test.core.DefineTest;
 import pageamp.test.core.ElementTest;
@@ -37,6 +40,10 @@ class TestAll {
 			r.add(new DefineTest());
 			r.add(new PageTest());
 			r.add(new HeadTest());
+			// server
+			r.add(new HtmlParserTest());
+			r.add(new LoaderTest());
+			r.add(new OutputTest());
 			r.run();
 		});
 	}
@@ -71,6 +78,7 @@ class Runner extends TestRunner {
 
 			// customize TestRunner.print()
 			var div = js.Browser.document.getElementById("haxe:trace");
+			div.innerHTML = 'Client<br/><br/>';
 			TestRunner.print = function(v:Dynamic) {
 				if (div != null) {
 					var s = StringTools.htmlEscape(v+'').split("\n").join("<br/>");
@@ -86,7 +94,7 @@ class Runner extends TestRunner {
 
 #elseif php
 		Lib.println('<html><head><style>body {color:#ccc;background:#222;}'
-		+'</style></head><body><pre>');
+		+'</style></head><body><pre>PHP\n');
 
 		// customize TestRunner.print()
 		TestRunner.print = function(v:Dynamic) {

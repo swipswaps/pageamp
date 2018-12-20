@@ -22,6 +22,7 @@
 
 package pageamp.server;
 
+import pageamp.web.URL;
 import pageamp.util.PropertyTool.Props;
 import pageamp.core.*;
 import pageamp.web.DomTools;
@@ -41,13 +42,13 @@ class Loader {
 	                                dst:DomDocument,
 	                                rootpath:String,
 	                                domain:String,
-	                                uri:String): ServerPage {
+	                                uri:String): Page {
 		dst == null ? dst = DomTools.defaultDocument() : null;
 		var ret = loadRoot(dst, src, rootpath, domain, uri);
 		return ret;
 	}
 
-	public static function loadPage2(text:String, ?dst:DomDocument): ServerPage {
+	public static function loadPage2(text:String, ?dst:DomDocument): Page {
 //		text = normalizeText(text);
 		var src = PreprocessorParser.parseDoc(text);
 		dst == null ? dst = DomTools.defaultDocument() : null;
@@ -74,8 +75,8 @@ class Loader {
 	                         domain:String,
 	                         uri='/'): Page {
 		var e = src.children[0];
-		var url = new Url(uri);
-		url.domain = domain;
+		var url = new URL(uri);
+		url.host = domain;
 		var props = loadProps(e, false);
 		props.set(Page.FSPATH_PROP, rootpath);
 		props.set(Page.URI_PROP, url);
@@ -106,7 +107,7 @@ class Loader {
 
 	static function loadProps(e:HtmlNodeElement, tagname=true): Props {
 		var props:Props = {};
-		tagname ? props.set(Element.TAG_PROP, e.name) : null;
+		tagname ? props.set(Element.ELEMENT_TAG, e.name) : null;
 		for (a in e.attributes) {
 			var key = a.name;
 			if (key.startsWith(HIDDEN_ATTR)) {

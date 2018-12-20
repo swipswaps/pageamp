@@ -34,6 +34,7 @@ using pageamp.util.PropertyTool;
 class Define extends Element {
 	public static var AUTOPREFIX = ':';
 	public static inline var TAGNAME = ':define';
+	public static inline var TAG_PROP = 'tag';
 	public static inline var DEFNAME_PROP = Node.NODE_PREFIX + 'def';
 	public static inline var EXTNAME_PROP = Node.NODE_PREFIX + 'ext';
 	public var ext(default,null): Define;

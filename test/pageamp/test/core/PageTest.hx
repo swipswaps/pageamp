@@ -1,5 +1,8 @@
 package pageamp.test.core;
 
+import pageamp.core.Body;
+import pageamp.core.Head;
+import pageamp.core.Define;
 import pageamp.util.PropertyTool;
 import pageamp.core.Element;
 import pageamp.core.Page;
@@ -67,6 +70,25 @@ class PageTest extends TestCase {
 		assertTrue(p.head != null);
 		assertEquals(p.head.dom, p.getDocument().domGetHead());
 		assertEquals(p.get('head'), p.head.scope);
+	}
+
+	function testPageDefine() {
+		var e;
+		var p = new Page(TestAll.getDoc(), null, function(p:Page) {
+			new Head(p, null, function(h:Head) {
+				new Define(h, {n_def:'foo', n_ext:'span'}, function(d:Define) {
+					new Element(d, {n_tag:'b', innerText:"title: ${title}"});
+					new Element(d, {n_tag:'i', innerText:"text: ${text}"});
+				});
+			});
+			new Body(p, null, function(b:Body) {
+				e = new Element(b, {n_tag:':foo', title:'X', text:'Y'});
+			});
+		});
+		assertEquals('<html>'
+		+ '<head></head><body>'
+		+ '<span><b>title: X</b><i>text: Y</i></span>'
+		+ '</body></html>', p.doc.domToString());
 	}
 
 }

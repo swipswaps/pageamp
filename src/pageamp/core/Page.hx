@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2018 Ubimate Technologies Ltd and PageAmp contributors.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package pageamp.core;
 
 import pageamp.react.Value;
@@ -13,6 +35,10 @@ using pageamp.util.PropertyTool;
 using pageamp.web.DomTools;
 
 class Page extends Element implements Root {
+	public static inline var WINDOW_ATTR = 'window';
+//	public static inline var REDIRECT_ATTR = 'pageRedirect';
+	public static inline var FSPATH_PROP = 'pageFSPath';
+	public static inline var URI_PROP = 'pageURI';
 	public static inline var PAGE_LANG = Element.ATTRIBUTE_PREFIX + 'lang';
 	public var doc: DomDocument;
 	public var head: Head;
@@ -74,7 +100,7 @@ class Page extends Element implements Root {
 	                                 name:String,
 	                                 ?pseudoElt:String): String {
 #if client
-		var w:Window = props.get('window');
+		var w:Window = props.get(WINDOW_ATTR);
 		var s:Props = (w != null ? w.getComputedStyle(e, pseudoElt) : null);
 		return s.get(name, '');
 #else
