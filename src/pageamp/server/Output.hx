@@ -1,13 +1,11 @@
 package pageamp.server;
 
 import haxe.format.JsonPrinter;
-import haxe.Json;
 import pageamp.util.ArrayTool;
 import pageamp.web.DomTools.DomTextNode;
 import pageamp.core.Text;
 import pageamp.core.Datasource;
 import pageamp.util.PropertyTool;
-import pageamp.web.DomTools.DomElement;
 import pageamp.core.Element;
 import pageamp.core.Page;
 
@@ -15,33 +13,6 @@ using pageamp.util.PropertyTool;
 using pageamp.web.DomTools;
 
 class Output {
-
-//	public static function write(page:Page) {
-//
-//	}
-//
-//	public static function toMarkup(page:Page): String {
-//		var root = page.doc.domRootElement();
-//		// 1. set logic ids
-//		addIds(page);
-//		// 2. add state descriptor
-//		// 3. add client code
-//		// 4. serialize DOM
-//		return root.domMarkup();
-//	}
-//
-//	public static function addIds(p:Element) {
-//		for (n in p.children) {
-//			if (Std.is(n, Element)) {
-//				var e:Element = untyped n;
-//				var dom:DomElement = cast e.getDomNode();
-//				if (dom != null) {
-//					dom.domSet(Element.ID_DOM_ATTRIBUTE, e.id + '');
-//				}
-//				addIds(e);
-//			}
-//		}
-//	}
 
 	public static function addClient(page:Page, ua:String) {
 		function getChildren(props:Props): Array<Props> {
@@ -51,16 +22,15 @@ class Output {
 			}
 			return children;
 		}
-		var f = null;
-		f = function(props:Props, t:Element) {
+		var scan = null;
+		scan = function(prp:Props, t:Element) {
 			var children1:Array<Props> = null;
 			var scope = t.getScope();
 			if (scope == null) {
 				return;
 			}
-			//var extScope = (t.parent != null ? t.nodeParent.getScope() : null);
 			if (scope.owner == t) {
-				children1 == null ? children1 = getChildren(props) : null;
+				children1 == null ? children1 = getChildren(prp) : null;
 				t.dom.domSet(Element.ID_DOM_ATTRIBUTE, t.id + '');
 				t.props.set(Element.ELEMENT_ID, t.id);
 				t.props.remove(Element.ELEMENT_DOM);
@@ -75,12 +45,12 @@ class Output {
 				}
 
 				children1.push(t.props);
-				props = t.props;
+				prp = t.props;
 			}
 			var children2:Array<Props> = null;
 			for (c in t.baseChildren) {
 				if (Std.is(c, Element)) {
-					f(props, untyped c);
+					scan(prp, untyped c);
 				} else if (Std.is(c, Text)) {
 					var text:Text = untyped c;
 					var n:DomTextNode = untyped text.getDomNode();
@@ -88,24 +58,24 @@ class Output {
 						var p = n.domGetParent();
 						var s = text.id + '';
 						var m = page.createDomElement('b',
-								PropertyTool.set(null, Element.ID_DOM_ATTRIBUTE, s),
-								p, n);
+							PropertyTool.set(null, Element.ID_DOM_ATTRIBUTE, s),
+							p, n);
 						var tp:Props = {};
 						tp.set(Element.ID_DOM_ATTRIBUTE, text.id);
 						tp.set(Text.TEXT_PROP, text.value.source);
-						children2 == null ? children2 = getChildren(props) : null;
+						children2 == null ? children2 = getChildren(prp) : null;
 						children2.push(tp);
 					}
 				}
 			}
 		}
 		var props:Props = {};
-		f(props, page);
+		scan(props, page);
 		var root = ArrayTool.peek(props.get(Page.ISOCHILDREN_PROP));
 #if test
 		var s = (root != null ? SortedJsonPrinter.print(root) : '{}');
 #else
-		var s = (root != null ? Json.stringify(root) : '{}');
+		var s = (root != null ? JsonPrinter.print(root) : '{}');
 #end
 		var body = page.doc.domGetBody();
 		s = Page.ISOPROPS_ID + ' = ' + s + ';';

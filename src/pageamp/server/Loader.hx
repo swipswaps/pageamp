@@ -79,7 +79,7 @@ class Loader {
 		url.host = domain;
 		var props = loadProps(e, false);
 		props.set(Page.FSPATH_PROP, rootpath);
-		props.set(Page.URI_PROP, url);
+		props.set(Page.URI_PROP, url.toString());
 		var ret = new Page(doc, props, function(p:Page) {
 			loadChildren(p, e);
 		});

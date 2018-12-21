@@ -19,7 +19,9 @@ class OutputTest extends TestCase {
 		assertEquals('<html lang="es">'
 		+ '<head data-pa="2"></head>'
 		+ '<body data-pa="1">'
-		+ '<script>pageamp_descr = {"a_lang":"$'+'{\'es\'}","n_c":[{"n_id":2,"name":"head"}],"n_id":1,"pageFSPath":"/","pageURI":{"_query":null,"anchor":null,"authority":"","directory":"/","file":"","host":"test.local","params":null,"password":null,"path":"/","pathSlices":null,"port":null,"protocol":null,"query":null,"relative":"/","source":"/","user":null,"userInfo":null}};</script>\n'
+		+ '<script>pageamp_descr = {"a_lang":"$'+'{\'es\'}",'
+		+ '"n_c":[{"n_id":2,"name":"head"}],"n_id":1,"pageFSPath":"/",'
+		+ '"pageURI":"test.local/"};</script>\n'
 		+ '<script src="/.pageamp/client/bin/pageamp.js"></script>\n'
 		+ '</body></html>', s);
 	}
