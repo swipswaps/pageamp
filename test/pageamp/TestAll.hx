@@ -73,15 +73,18 @@ class Runner extends TestRunner {
 
 		// create #haxe:trace div
 		var iframe = Browser.document.createIFrameElement();
+		iframe.style.position = 'absolute';
+		iframe.style.opacity = '0';
+		iframe.style.zIndex = '-1';
 		iframe.onload = function(_) {
 			doc = iframe.contentDocument;
 
 			// customize TestRunner.print()
 			var div = js.Browser.document.getElementById("haxe:trace");
-			div.innerHTML = 'Client<br/><br/>';
+			div.innerHTML = 'Client\n\n';
 			TestRunner.print = function(v:Dynamic) {
 				if (div != null) {
-					var s = StringTools.htmlEscape(v+'').split("\n").join("<br/>");
+					var s = StringTools.htmlEscape(v+'');//.split("\n").join("<br/>");
 					div.innerHTML += s;
 				} else {
 					untyped __js__("console").log(v+'');
@@ -93,8 +96,10 @@ class Runner extends TestRunner {
 		Browser.document.body.appendChild(iframe);
 
 #elseif php
-		Lib.println('<html><head><style>body {color:#ccc;background:#222;}'
-		+'</style></head><body><pre>PHP\n');
+		Lib.println('<html><head>'
+		+ '<meta name="viewport" content="width=device-width, initial-scale=1">'
+		+ '<style>body {color:#ccc;background:#222;}'
+		+ '</style></head><body><pre>PHP\n');
 
 		// customize TestRunner.print()
 		TestRunner.print = function(v:Dynamic) {
