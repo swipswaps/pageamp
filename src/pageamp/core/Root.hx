@@ -32,7 +32,10 @@ interface Root {
 	                                 ?parent:DomElement,
 	                                 ?before:DomNode): DomElement;
 
-	public function createDomTextNode(text:String): DomTextNode;
+//	public function createDomTextNode(text:String): DomTextNode;
+	public function createDomTextNode(text:String,
+	                                  ?parent:DomElement,
+	                                  ?before:DomNode): DomTextNode;
 
 	public function getDefine(name:String): Define;
 
@@ -77,7 +80,9 @@ class RootHelper implements Root {
 		return null;
 	}
 
-	public function createDomTextNode(text:String): DomTextNode {
+	public function createDomTextNode(text:String,
+	                                  ?parent:DomElement,
+	                                  ?before:DomNode): DomTextNode {
 		return null;
 	}
 

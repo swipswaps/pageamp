@@ -439,7 +439,9 @@ class TestRootElement extends TestNode {
 		return ret;
 	}
 
-	override public function createDomTextNode(text:String): DomTextNode {
+	override public function createDomTextNode(text:String,
+	                                           ?parent:DomElement,
+	                                           ?before:DomNode): DomTextNode {
 		return doc.domCreateTextNode(text);
 	}
 

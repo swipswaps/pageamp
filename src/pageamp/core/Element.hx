@@ -51,6 +51,8 @@ class Element extends Node {
 	// runtime object DOM property
 	public static inline var PAGEAMP_OBJECT = 'pageamp';
 
+	public var dom: DomElement;
+
 	override public function set(key:String, val:Dynamic, push=true): Value {
 		var ret = null;
 		if (key.startsWith(ATTRIBUTE_PREFIX) && !isDynamicValue(key, val)) {
@@ -133,7 +135,6 @@ class Element extends Node {
 	// =========================================================================
 	// private
 	// =========================================================================
-	var dom: DomElement;
 	var hidden = false;
 
 	function init2() {

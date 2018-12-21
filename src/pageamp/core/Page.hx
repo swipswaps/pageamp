@@ -40,6 +40,10 @@ class Page extends Element implements Root {
 	public static inline var FSPATH_PROP = 'pageFSPath';
 	public static inline var URI_PROP = 'pageURI';
 	public static inline var PAGE_LANG = Element.ATTRIBUTE_PREFIX + 'lang';
+	// isomorphism
+	public static inline var ISOPROPS_ID = 'pageamp_descr';
+	public static inline var ISOCHILDREN_PROP = Node.NODE_PREFIX + 'c';
+
 	public var doc: DomDocument;
 	public var head: Head;
 	public var body: Body;
@@ -87,8 +91,24 @@ class Page extends Element implements Root {
 		return ret;
 	}
 
-	public function createDomTextNode(text:String): DomTextNode {
-		return doc.domCreateTextNode(text);
+//	public function createDomTextNode(text:String): DomTextNode {
+//		return doc.domCreateTextNode(text);
+//	}
+
+	public function createDomTextNode(text:String,
+	                                  ?parent:DomElement,
+	                                  ?before:DomNode): DomTextNode {
+		var ret = doc.domCreateTextNode(text);
+		parent != null ? parent.domAddChild(ret, before) : null;
+		return ret;
+	}
+
+	public function createDomComment(text:String,
+	                                 ?parent:DomElement,
+	                                 ?before:DomNode): DomTextNode {
+		var ret = doc.domCreateComment(text);
+		parent != null ? parent.domAddChild(ret, before) : null;
+		return ret;
 	}
 
 	public function getDefine(name:String): Define {

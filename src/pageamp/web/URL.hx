@@ -26,20 +26,20 @@ using StringTools;
 
 //http://old.haxe.org/doc/snip/uri_parser
 class URL {
-	public var source : String;
-	public var protocol : String;
-	public var authority : String;
-	public var userInfo : String;
-	public var user : String;
-	public var password : String;
-	public var host : String;
-	public var port : String;
-	public var relative : String;
-	public var path : String;
-	public var directory : String;
-	public var file : String;
-	public var query(get,null) : String;
-	public var anchor : String;
+	public var source : String = null;
+	public var protocol : String = null;
+	public var authority : String = null;
+	public var userInfo : String = null;
+	public var user : String = null;
+	public var password : String = null;
+	public var host : String = null;
+	public var port : String = null;
+	public var relative : String = null;
+	public var path : String = null;
+	public var directory : String = null;
+	public var file : String = null;
+	public var query(get,null) : String = null;
+	public var anchor : String = null;
 
 	public function new(url:String) {
 		// The almighty regexp (courtesy of http://blog.stevenlevithan.com/archives/parseuri)
@@ -135,8 +135,8 @@ class URL {
 	static private var _parts : Array<String> = ["source","protocol","authority",
 	"userInfo","user","password","host","port","relative","path","directory",
 	"file","_query","anchor"];
-	var pathSlices: Array<String>;
-	var _query: String;
-	var params: Map<String,String>;
+	var pathSlices: Array<String> = null;
+	var _query: String = null;
+	var params: Map<String,String> = null;
 
 }
