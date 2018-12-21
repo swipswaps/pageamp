@@ -28,4 +28,12 @@ class Log {
 #end
 	}
 
+	macro public static function server(e:Expr) {
+#if (debug && logServer)
+		return macro trace('Server - ' + $e);
+#else
+		return macro null;
+#end
+	}
+
 }
