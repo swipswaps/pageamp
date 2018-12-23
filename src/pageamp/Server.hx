@@ -22,6 +22,7 @@
 
 package pageamp;
 
+import pageamp.core.Page;
 import haxe.io.Path;
 import htmlparser.HtmlDocument;
 import pageamp.server.Loader;
@@ -56,9 +57,53 @@ class Server {
 	    } else {
 		    ext == 'html' ? uri = uri.split('.$ext')[0] : null;
 		    uri.endsWith('/') ? uri = uri + 'index' : null;
-		    outputPage(root, domain, uri, params);
+		    var page = getPage(root, domain, uri, params);
+		    if (maxLevel >= ERR) {
+			    outputLog();
+		    } else if (page != null) {
+			    outputLog(); //outputPage(page);
+		    } else {
+			    outputResource(root, '404.html', 404);
+		    }
 	    }
     }
+
+	// =========================================================================
+	// log()
+	// =========================================================================
+	public static inline var DEBUG = 1;
+	public static inline var TRACE = 2;
+	public static inline var WARN = 3;
+	public static inline var ERR = 4;
+	public static inline var FATAL = 5;
+	static var logEntries = new Array<LogEntry>();
+	static var maxLevel = 0;
+
+	public static inline function debug(msg:String) log(DEBUG, msg);
+	public static inline function trace(msg:String) log(TRACE, msg);
+	public static inline function warn(msg:String) log(WARN, msg);
+	public static inline function err(msg:String) log(ERR, msg);
+	public static inline function fatal(msg:String) log(FATAL, msg);
+
+	public static function log(level:Int, msg:String) {
+		level > maxLevel ? maxLevel = level : null;
+		logEntries.push({level:level, msg:msg});
+	}
+
+	static function outputLog() {
+		php.Web.setHeader('Content-type', 'text/plain');
+		for (e in logEntries) {
+			php.Lib.print(switch (e.level) {
+  				case DEBUG: 'DEBUG ';
+				case TRACE: 'TRACE ';
+				case WARN: 'WARN ';
+				case ERR: 'ERR ';
+				case FATAL: 'FATAL ';
+				default: 'UNKNOWN ';
+			});
+			php.Lib.println(e.msg);
+		}
+	}
 
 	// =========================================================================
 	// outputFile()
@@ -95,10 +140,11 @@ class Server {
 	// outputPage()
 	// =========================================================================
 
-	static function outputPage(root:String,
-	                           domain:String,
-	                           uri:String,
-	                           params:Map<String,String>) {
+	static function getPage(root:String,
+	                        domain:String,
+	                        uri:String,
+	                        params:Map<String,String>): Page {
+		var ret:Page = null;
 		var src:HtmlDocument = null;
 		//uri = uri.replace('%20', ' ');
 		Log.server('outputPage($root, $uri)');
@@ -112,7 +158,7 @@ class Server {
 				&& FileSystem.isDirectory(root + uri)) {
 				Web.redirect(uri + '/');
 			} else {
-				//TODO
+				err(e + '');
 			}
 		}
 		try {
@@ -124,16 +170,16 @@ class Server {
 			} else {
 				var ua = getUserAgent();
 				Output.addClient(page, ua);
-				php.Web.setHeader('Content-type', 'text/html');
-				php.Lib.println('<!DOCTYPE html>');
-				php.Lib.print(page.doc.domRootElement().domMarkup());
+				ret = page;
 			}
 		} catch (e:Dynamic) {
-			outputResource(root, '404.html', 404);
+//			outputResource(root, '404.html', 404);
+			err(e + '');
 		}
+		return ret;
 	}
 
-	public static function getUserAgent() : String {
+	static function getUserAgent() : String {
 		var ua = null;
 		try {
 			ua = untyped __php__("$_SERVER['HTTP_USER_AGENT']");
@@ -141,4 +187,15 @@ class Server {
 		return ua;
 	}
 
+	static inline function outputPage(page:Page) {
+		php.Web.setHeader('Content-type', 'text/html');
+		php.Lib.println('<!DOCTYPE html>');
+		php.Lib.print(page.doc.domRootElement().domMarkup());
+	}
+
+}
+
+typedef LogEntry = {
+	var level: Int;
+	var msg: String;
 }

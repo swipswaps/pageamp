@@ -111,6 +111,7 @@ class Preprocessor {
 
 		var imports = lookupByName(ret, IMPORT_TAGNAME);
 		for (imp in imports) {
+			Server.trace('import: ' + imp.getAttribute(INCLUDE_NAMEATTR));
 			processInclude(path, imp, nesting, true);
 		}
 
@@ -121,12 +122,16 @@ class Preprocessor {
 		return ret;
 	}
 
-	function processInclude(path:Path, include:HtmlNodeElement, nesting:Int, once=false) {
+	function processInclude(path:Path,
+	                        include:HtmlNodeElement,
+	                        nesting:Int,
+	                        once=false) {
 		var href = include.getAttribute(INCLUDE_NAMEATTR);
 		if (href != null) {
 			var basepath = path.dir + '/';
 			href.startsWith('/') ? basepath = this.basepath : null;
 			var pathname = Path.normalize(basepath + href);
+			Server.trace('processInclude(): ' + pathname);
 			if (!once || !imports.exists(pathname)) {
 				once ? imports.add(pathname) : null;
 				if (pathname.startsWith(basepath)) {
