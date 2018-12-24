@@ -22,9 +22,9 @@
 
 package pageamp;
 
-import pageamp.core.Page;
 import haxe.io.Path;
 import htmlparser.HtmlDocument;
+import pageamp.core.Page;
 import pageamp.server.Loader;
 import pageamp.server.Output;
 import pageamp.server.Preprocessor;
@@ -61,7 +61,7 @@ class Server {
 		    if (maxLevel >= ERR) {
 			    outputLog();
 		    } else if (page != null) {
-			    outputLog(); //outputPage(page);
+			    outputPage(page);
 		    } else {
 			    outputResource(root, '404.html', 404);
 		    }
@@ -91,9 +91,9 @@ class Server {
 	}
 
 	static function outputLog() {
-		php.Web.setHeader('Content-type', 'text/plain');
+		Web.setHeader('Content-type', 'text/plain');
 		for (e in logEntries) {
-			php.Lib.print(switch (e.level) {
+			Lib.print(switch (e.level) {
   				case DEBUG: 'DEBUG ';
 				case TRACE: 'TRACE ';
 				case WARN: 'WARN ';
@@ -101,7 +101,7 @@ class Server {
 				case FATAL: 'FATAL ';
 				default: 'UNKNOWN ';
 			});
-			php.Lib.println(e.msg);
+			Lib.println(e.msg);
 		}
 	}
 
@@ -149,8 +149,8 @@ class Server {
 		//uri = uri.replace('%20', ' ');
 		Log.server('outputPage($root, $uri)');
 		try {
-			var p = new Preprocessor();
-			src = p.loadFile(root + uri, root);
+			var p = new Preprocessor(Web.getCwd());
+			src = p.loadFile(uri);
 		} catch (e:Dynamic) {
 			Log.server('outputPage(): ' + e);
 			if (!uri.endsWith('/')
@@ -166,7 +166,7 @@ class Server {
 			var page = Loader.loadPage(src, null, path.dir, domain, Web.getURI());
 			var redirect = page.get('pageRedirect');
 			if (redirect != null) {
-				php.Web.redirect(redirect);
+				Web.redirect(redirect);
 			} else {
 				var ua = getUserAgent();
 				Output.addClient(page, ua);
@@ -188,9 +188,9 @@ class Server {
 	}
 
 	static inline function outputPage(page:Page) {
-		php.Web.setHeader('Content-type', 'text/html');
-		php.Lib.println('<!DOCTYPE html>');
-		php.Lib.print(page.doc.domRootElement().domMarkup());
+		Web.setHeader('Content-type', 'text/html');
+		Lib.println('<!DOCTYPE html>');
+		Lib.print(page.doc.domRootElement().domMarkup());
 	}
 
 }

@@ -52,24 +52,27 @@ class Preprocessor {
 	public static inline var DEFAULTSLOT_NAME = 'default';
 	public static inline var PARAMREF_RE = "(\\$\\[\\s*\\w+\\s*\\])";
 	public static inline var PARAMNAME_RE = "\\$\\[\\s*(\\w+)\\s*\\]";
+	public var rootdir: String;
 	public var doc: HtmlDocument;
 
-	public function new() {}
+	public function new(rootdir:String) {
+		this.rootdir = (rootdir.endsWith('/') ? rootdir : rootdir + '/');
+		Server.trace('Preprocessor.new(): ${this.rootdir}');
+	}
 
 #if !js
-	public function loadFile(pathname:String, basepath:String) {
-		this.basepath = Path.normalize(basepath);
-		doc = load(new Path(pathname));
+	public function loadFile(pathname:String) {
+		doc = load(new Path(rootdir + pathname));
 		process();
 		return doc;
 	}
 
-	public function loadText(pathname:String, basepath:String, text:String) {
-		this.basepath = Path.normalize(basepath);
-		doc = load2(new Path(pathname), text);
-		process();
-		return doc;
-	}
+//	public function loadText(pathname:String, basepath:String, text:String) {
+//		this.basepath = Path.normalize(basepath);
+//		doc = load2(new Path(pathname), text);
+//		process();
+//		return doc;
+//	}
 #end
 
 	// =========================================================================
@@ -111,7 +114,6 @@ class Preprocessor {
 
 		var imports = lookupByName(ret, IMPORT_TAGNAME);
 		for (imp in imports) {
-			Server.trace('import: ' + imp.getAttribute(INCLUDE_NAMEATTR));
 			processInclude(path, imp, nesting, true);
 		}
 
@@ -129,19 +131,24 @@ class Preprocessor {
 		var href = include.getAttribute(INCLUDE_NAMEATTR);
 		if (href != null) {
 			var basepath = path.dir + '/';
-			href.startsWith('/') ? basepath = this.basepath : null;
+			href.startsWith('/') ? basepath = rootdir : null;
 			var pathname = Path.normalize(basepath + href);
-			Server.trace('processInclude(): ' + pathname);
+			Server.trace('Preprocessor.processInclude(): ' + pathname);
 			if (!once || !imports.exists(pathname)) {
 				once ? imports.add(pathname) : null;
-				if (pathname.startsWith(basepath)) {
+				if (pathname.startsWith(rootdir)) {
 					var path2 = new Path(pathname);
 					var root = load(path2, nesting + 1).children[0];
 					includeContent(include, root);
 				} else {
 					throw 'access forbidden ("$pathname")';
 				}
+			} else {
+				remove(include);
 			}
+		} else {
+			Server.err('missing ${INCLUDE_NAMEATTR}'
+				+ ' attribute in ${include.name} tag');
 		}
 	}
 
@@ -153,7 +160,7 @@ class Preprocessor {
 			p.parent.removeChild(e);
 			p.addChild(e, include);
 		}
-		p.removeChild(include);
+		remove(include);
 		// copy include-level dynamic attributes to include's parent
 		for (a in root.attributes) {
 			if (a.name.startsWith(':') && !p.hasAttribute(a.name)) {
@@ -162,6 +169,17 @@ class Preprocessor {
 		}
 	}
 #end
+
+	inline function remove(e:HtmlNodeElement) {
+//		var n1 = e.getPrevSiblingNode();
+//		var n2 = e.getNextSiblingNode();
+//		if (Std.is(n1, HtmlNodeText) && Std.is(n2, HtmlNodeText)) {
+//			if (n1.toText().trim() == '' && n2.toText().trim() == '') {
+//				n2.remove();
+//			}
+//		}
+		e.remove();
+	}
 
 	// =========================================================================
 	// macros
