@@ -50,7 +50,7 @@ class Loader {
 
 	public static function loadPage2(text:String, ?dst:DomDocument): Page {
 //		text = normalizeText(text);
-		var src = PreprocessorParser.parseDoc(text);
+		var src = SrcParser.parseDoc(text);
 		dst == null ? dst = DomTools.defaultDocument() : null;
 		var ret = loadRoot(dst, src, null, null, null);
 		return ret;

@@ -24,7 +24,7 @@ package pageamp.server;
 
 import htmlparser.*;
 
-class PreprocessorParser extends HtmlParser {
+class SrcParser extends HtmlParser {
 	static var patched = false;
 
 	static function patch() {

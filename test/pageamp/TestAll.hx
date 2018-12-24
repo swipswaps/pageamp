@@ -1,6 +1,6 @@
 package pageamp;
 
-import pageamp.server.PreprocessorParserTest;
+import pageamp.server.SrcParserTest;
 import pageamp.server.OutputTest;
 import pageamp.server.LoaderTest;
 import haxe.unit.TestRunner;
@@ -41,7 +41,7 @@ class TestAll {
 			r.add(new PageTest());
 			r.add(new HeadTest());
 			// server
-			r.add(new PreprocessorParserTest());
+			r.add(new SrcParserTest());
 			r.add(new LoaderTest());
 			r.add(new OutputTest());
 			r.run();

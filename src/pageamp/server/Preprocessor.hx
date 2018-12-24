@@ -110,7 +110,7 @@ class Preprocessor {
 //		text = text.replace(lineSep, '\n');
 
 //		text = normalizeHtml(text);
-		var ret = PreprocessorParser.parseDoc(text);
+		var ret = SrcParser.parseDoc(text);
 
 		var imports = lookupByName(ret, IMPORT_TAGNAME);
 		for (imp in imports) {
