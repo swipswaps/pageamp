@@ -21,22 +21,22 @@ using pageamp.web.DomTools;
 **/
 class Element extends Node {
 	public static inline var ID_DOM_ATTRIBUTE = 'data-pa';
-	public static inline var ATTRIBUTE_PREFIX = 'a_';
-	public static inline var CLASS_PREFIX = 'c_';
-	public static inline var CLASS_PREFIX2 = ':c-';
-	public static inline var STYLE_PREFIX = 's_';
-	public static inline var STYLE_PREFIX2 = ':s-';
-	public static inline var EVENT_PREFIX = 'ev_';
-	public static inline var EVENT_PREFIX2 = ':ev-';
-	public static inline var HANDLER_PREFIX = 'on_';
-	public static inline var HANDLER_PREFIX2 = ':on-';
+	public static inline var ATTRIBUTE_PFX = 'a_';
+	public static inline var CLASS_PFX = 'c_';
+	public static inline var CLASS_PFX2 = ':c-';
+	public static inline var STYLE_PFX = 's_';
+	public static inline var STYLE_PFX2 = ':s-';
+	public static inline var EVENT_PFX = 'ev_';
+	public static inline var EVENT_PFX2 = ':ev-';
+	public static inline var HANDLER_PFX = 'on_';
+	public static inline var HANDLER_PFX2 = ':on-';
 	// static attributes
-	public static inline var ELEMENT_DOM = Node.NODE_PREFIX + 'dom';
-	public static inline var ELEMENT_TAG = Node.NODE_PREFIX + 'tag';
-	public static inline var ELEMENT_SLOT = Node.NODE_PREFIX + 'slot';
-	public static inline var ELEMENT_ID = Node.NODE_PREFIX + 'id';
+	public static inline var ELEMENT_DOM = Node.NODE_PFX + 'dom';
+	public static inline var ELEMENT_TAG = Node.NODE_PFX + 'tag';
+	public static inline var ELEMENT_SLOT = Node.NODE_PFX + 'slot';
+	public static inline var ELEMENT_ID = Node.NODE_PFX + 'id';
 	// (replicated nodes)
-	public static inline var SOURCE_PROP = Node.NODE_PREFIX + 'src';
+	public static inline var SOURCE_PROP = Node.NODE_PFX + 'src';
 	// predefined dynamic attributes
 	public static inline var NAME_PROP = 'name';
 	public static inline var INNERTEXT_PROP = 'innerText';
@@ -55,8 +55,8 @@ class Element extends Node {
 
 	override public function set(key:String, val:Dynamic, push=true): Value {
 		var ret = null;
-		if (key.startsWith(ATTRIBUTE_PREFIX) && !isDynamicValue(key, val)) {
-			key = Node.makeHyphenName(key.substr(ATTRIBUTE_PREFIX.length));
+		if (key.startsWith(ATTRIBUTE_PFX) && !isDynamicValue(key, val)) {
+			key = Node.makeHyphenName(key.substr(ATTRIBUTE_PFX.length));
 			attributeValueCB(dom, key, val);
 		} else {
 			scope == null ? makeScope() : null;
@@ -150,7 +150,7 @@ class Element extends Node {
 			// nop
 		} else {
 			for (k in props.keys()) {
-				if (!k.startsWith(Node.NODE_PREFIX)) {
+				if (!k.startsWith(Node.NODE_PFX)) {
 					set(k, props.get(k));
 				}
 			}
@@ -294,33 +294,33 @@ class Element extends Node {
 	override function newValueDelegate(v:Value) {
 		var name = v.name;
 		v.userdata = dom;
-		if (name.startsWith(ATTRIBUTE_PREFIX)) {
-			v.nativeName = makeNativeName(name, ATTRIBUTE_PREFIX.length);
+		if (name.startsWith(ATTRIBUTE_PFX)) {
+			v.nativeName = makeNativeName(name, ATTRIBUTE_PFX.length);
 			if (!props.exists(FOREACH_PROP) || v.nativeName != 'style') {
 				v.cb = attributeValueCB;
 			}
-		} else if (name.startsWith(CLASS_PREFIX)) {
-			v.nativeName = makeNativeName(name, CLASS_PREFIX.length);
+		} else if (name.startsWith(CLASS_PFX)) {
+			v.nativeName = makeNativeName(name, CLASS_PFX.length);
 			v.cb = classValueCB;
-		} else if (name.startsWith(STYLE_PREFIX)) {
-			v.nativeName = makeNativeName(name, STYLE_PREFIX.length);
+		} else if (name.startsWith(STYLE_PFX)) {
+			v.nativeName = makeNativeName(name, STYLE_PFX.length);
 			if (!props.exists(FOREACH_PROP)) {
 				v.cb = styleValueCB;
 			}
-		} else if (name.startsWith(EVENT_PREFIX)) {
+		} else if (name.startsWith(EVENT_PFX)) {
 			v.unlink(); // non refreshed
 			if (v.isDynamic()) {
 				// contains script
-				var evname = name.substr(EVENT_PREFIX.length);
+				var evname = name.substr(EVENT_PFX.length);
 				dom.domAddEventHandler(evname, v.evGet);
 			}
-		} else if (name.startsWith(HANDLER_PREFIX)) {
+		} else if (name.startsWith(HANDLER_PFX)) {
 			v.unlink(); // non refreshed
 			if (v.isDynamic()) {
 				// contains script
 				//TODO: this only supports single expressions (no ';' separator)
-				var valname = name.substr(HANDLER_PREFIX.length);
-				var refname = Node.NODE_PREFIX + root.nextId();
+				var valname = name.substr(HANDLER_PFX.length);
+				var refname = Node.NODE_PFX + root.nextId();
 				set(refname, "${" + valname + "}").cb = v.get3;
 			}
 		} else if (name == INNERTEXT_PROP) {

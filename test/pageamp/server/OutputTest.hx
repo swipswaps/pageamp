@@ -1,5 +1,6 @@
 package pageamp.server;
 
+import pageamp.server.SrcParser;
 import haxe.unit.TestCase;
 import htmlparser.HtmlDocument;
 import pageamp.server.Loader;
@@ -10,7 +11,7 @@ using pageamp.web.DomTools;
 class OutputTest extends TestCase {
 
 	function testAddClient() {
-		var src = new HtmlDocument('<html lang="$'+'{\'es\'}">'
+		var src = new SrcDocument('<html lang="$'+'{\'es\'}">'
 		+ '<head></head><body></body></html>');
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');

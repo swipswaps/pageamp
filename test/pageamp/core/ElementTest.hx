@@ -46,7 +46,7 @@ class ElementTest extends TestCase {
 		var doc = TestAll.getDoc();
 		var root = new TestRootElement(doc);
 		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
-		props.set(Element.ATTRIBUTE_PREFIX + 'id', 'my-id');
+		props.set(Element.ATTRIBUTE_PFX + 'id', 'my-id');
 		var p = new Element(root, props);
 
 		assertEquals('<html>'
@@ -58,7 +58,7 @@ class ElementTest extends TestCase {
 		var doc = TestAll.getDoc();
 		var root = new TestRootElement(doc);
 		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
-		props.set(Element.ATTRIBUTE_PREFIX + 'id', "${'my-id'}");
+		props.set(Element.ATTRIBUTE_PFX + 'id', "${'my-id'}");
 		var p = new Element(root, props);
 
 		assertEquals('<html>'
@@ -76,7 +76,7 @@ class ElementTest extends TestCase {
 		var doc = TestAll.getDoc();
 		var root = new TestRootElement(doc);
 		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
-		props.set(Element.CLASS_PREFIX + 'class1', "${true}");
+		props.set(Element.CLASS_PFX + 'class1', "${true}");
 		var p = new Element(root, props);
 		root.refresh();
 
@@ -95,7 +95,7 @@ class ElementTest extends TestCase {
 		var doc = TestAll.getDoc();
 		var root = new TestRootElement(doc);
 		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
-		props.set(Element.STYLE_PREFIX + 'color', "red");
+		props.set(Element.STYLE_PFX + 'color', "red");
 		var p = new Element(root, props);
 		root.refresh();
 
@@ -133,7 +133,7 @@ class ElementTest extends TestCase {
 		var doc = TestAll.getDoc();
 		var root = new TestRootElement(doc);
 		var props = PropertyTool.set(null, Element.ELEMENT_DOM, root.body);
-		props.set(Element.STYLE_PREFIX + 'color', "red");
+		props.set(Element.STYLE_PFX + 'color', "red");
 		var p = new Element(root, props);
 		root.refresh();
 

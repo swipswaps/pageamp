@@ -39,10 +39,10 @@ class Page extends Element implements Root {
 //	public static inline var REDIRECT_ATTR = 'pageRedirect';
 	public static inline var FSPATH_PROP = 'pageFSPath';
 	public static inline var URI_PROP = 'pageURI';
-	public static inline var PAGE_LANG = Element.ATTRIBUTE_PREFIX + 'lang';
+	public static inline var PAGE_LANG = Element.ATTRIBUTE_PFX + 'lang';
 	// isomorphism
 	public static inline var ISOPROPS_ID = 'pageamp_descr';
-	public static inline var ISOCHILDREN_PROP = Node.NODE_PREFIX + 'c';
+	public static inline var ISOCHILDREN_PROP = Node.NODE_PFX + 'c';
 
 	public var doc: DomDocument;
 	public var head: Head;
@@ -148,7 +148,7 @@ class Page extends Element implements Root {
 
 	override function newValueDelegate(v:Value) {
 		if (v.name == PAGE_LANG) {
-			v.nativeName = v.name.substr(Element.ATTRIBUTE_PREFIX.length);
+			v.nativeName = v.name.substr(Element.ATTRIBUTE_PFX.length);
 			v.userdata = doc.domRootElement();
 			v.cb = attributeValueCB;
 			v.cb(v.userdata, v.nativeName, v.value);

@@ -25,6 +25,7 @@ package pageamp.server;
 import haxe.unit.TestCase;
 import htmlparser.HtmlDocument;
 import pageamp.server.Loader;
+import pageamp.server.SrcParser;
 
 using pageamp.util.PropertyTool;
 using pageamp.web.DomTools;
@@ -32,7 +33,7 @@ using pageamp.web.DomTools;
 class LoaderTest extends TestCase {
 
 	function testLoader1() {
-		var src = new HtmlDocument('<html><head></head><body></body></html>');
+		var src = new SrcDocument('<html><head></head><body></body></html>');
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
 		var out = dst.domToString();
@@ -40,7 +41,7 @@ class LoaderTest extends TestCase {
 	}
 
 	function testLoader2() {
-		var src = new HtmlDocument('<html lang="en">'
+		var src = new SrcDocument('<html lang="en">'
 		+ '<head></head><body></body></html>');
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
@@ -49,7 +50,7 @@ class LoaderTest extends TestCase {
 	}
 
 	function testLoader3() {
-		var src = new HtmlDocument('<html lang="$'+'{\'es\'}">'
+		var src = new SrcDocument('<html lang="$'+'{\'es\'}">'
 		+ '<head></head><body id="1"></body></html>');
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
@@ -59,7 +60,7 @@ class LoaderTest extends TestCase {
 	}
 
 	function testNativeAttribute1() {
-		var src = new HtmlDocument('<html><head></head>'
+		var src = new SrcDocument('<html><head></head>'
 		+ '<body class="app"></body></html>');
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
@@ -69,7 +70,7 @@ class LoaderTest extends TestCase {
 	}
 
 	function testLogicAttribute1() {
-		var src = new HtmlDocument('<html><head></head>'
+		var src = new SrcDocument('<html><head></head>'
 		+ '<body :class="app" class="$'+'{class} main"></body></html>');
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
@@ -79,7 +80,7 @@ class LoaderTest extends TestCase {
 	}
 
 	function testNamedClassAttribute1() {
-		var src = new HtmlDocument('<html><head></head>'
+		var src = new SrcDocument('<html><head></head>'
 		+ '<body :c-app></body></html>');
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
@@ -89,7 +90,7 @@ class LoaderTest extends TestCase {
 	}
 
 	function testNamedStyleAttribute1() {
-		var src = new HtmlDocument('<html><head></head>'
+		var src = new SrcDocument('<html><head></head>'
 		+ '<body :s-color="red"></body></html>');
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
@@ -99,7 +100,7 @@ class LoaderTest extends TestCase {
 	}
 
 	function testEventAttribute1() {
-		var src = new HtmlDocument('<html><head></head>'
+		var src = new SrcDocument('<html><head></head>'
 		+ '<body :ev-click="$'+'{log(ev)}"></body></html>');
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
@@ -110,7 +111,7 @@ class LoaderTest extends TestCase {
 	}
 
 	function testHandlerAttribute1() {
-		var src = new HtmlDocument('<html><head></head>'
+		var src = new SrcDocument('<html><head></head>'
 		+ '<body :on-x="$'+'{log(x)}"></body></html>');
 		var dst = TestAll.getDoc();
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/');
@@ -121,7 +122,7 @@ class LoaderTest extends TestCase {
 	}
 
 	function testDefine1() {
-		var src = new HtmlDocument('<html><head>'
+		var src = new SrcDocument('<html><head>'
 		+ '<:define :tag="test:div" :text="">$'+'{text}</:define>'
 		+ '</head><body id="1"><:test :text="Foo"/></body></html>');
 		var s = src.toString();

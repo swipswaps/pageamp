@@ -38,6 +38,7 @@ class ValueContext {
 	public var stack: Array<Value>;
 	public var applyList(default,null): Array<Void->Void>;
 	public var owner: Dynamic;
+	public var parserErrorCB: Dynamic->Void;
 
 	public function new(?owner:Dynamic) {
 		reset(owner);
@@ -53,6 +54,7 @@ class ValueContext {
 		try {
 			ret = parser.parseString(code);
 		} catch (ex:Dynamic) {
+			parserErrorCB != null ? parserErrorCB(ex) : null;
 			Log.value('new(): $ex');
 		}
 		return ret;

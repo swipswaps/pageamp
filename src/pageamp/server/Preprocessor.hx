@@ -22,6 +22,7 @@
 
 package pageamp.server;
 
+import pageamp.server.SrcParser;
 import pageamp.util.Set;
 import pageamp.core.Element;
 import pageamp.react.Value;
@@ -53,7 +54,7 @@ class Preprocessor {
 	public static inline var PARAMREF_RE = "(\\$\\[\\s*\\w+\\s*\\])";
 	public static inline var PARAMNAME_RE = "\\$\\[\\s*(\\w+)\\s*\\]";
 	public var rootdir: String;
-	public var doc: HtmlDocument;
+	public var doc: SrcDocument;
 
 	public function new(rootdir:String) {
 		this.rootdir = (rootdir.endsWith('/') ? rootdir : rootdir + '/');
@@ -61,7 +62,7 @@ class Preprocessor {
 	}
 
 #if !js
-	public function loadFile(pathname:String) {
+	public function loadFile(pathname:String): SrcDocument {
 		doc = load(new Path(rootdir + pathname));
 		process();
 		return doc;
@@ -82,7 +83,7 @@ class Preprocessor {
 	var imports = new Set<String>();
 
 #if !js
-	function load(path:Path, nesting=0): HtmlDocument {
+	function load(path:Path, nesting=0): SrcDocument {
 		if (nesting > MAXNESTING) {
 			throw 'too many nested includes';
 		}
@@ -103,7 +104,7 @@ class Preprocessor {
 		return load2(path, text, nesting);
 	}
 
-	function load2(path:Path, text:String, nesting=0): HtmlDocument {
+	function load2(path:Path, text:String, nesting=0): SrcDocument {
 //		var lineSep = '__{[(LN)]}__';
 //		text = normalizeHtml(text, lineSep);
 //		text = ~/(<!---.*?--->)/g.replace(text, '');

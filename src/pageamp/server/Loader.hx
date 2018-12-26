@@ -22,23 +22,22 @@
 
 package pageamp.server;
 
-import pageamp.web.URL;
-import pageamp.util.PropertyTool.Props;
 import pageamp.core.*;
+import pageamp.server.SrcParser;
+import pageamp.util.PropertyTool.Props;
 import pageamp.web.DomTools;
-import htmlparser.*;
+import pageamp.web.URL;
 
 using StringTools;
 using pageamp.util.PropertyTool;
 using pageamp.web.DomTools;
-using pageamp.util.SourceTools;
 
 //TODO: verifica e logging errori
 class Loader {
 	public static inline var HIDDEN_COMMENT = '<!---';
 	public static inline var HIDDEN_ATTR = '::';
 
-	public static function loadPage(src:HtmlDocument,
+	public static function loadPage(src:SrcDocument,
 	                                dst:DomDocument,
 	                                rootpath:String,
 	                                domain:String,
@@ -70,11 +69,11 @@ class Loader {
 	// =========================================================================
 
 	static function loadRoot(doc:DomDocument,
-	                         src:HtmlDocument,
+	                         src:SrcDocument,
 	                         rootpath:String,
 	                         domain:String,
 	                         uri='/'): Page {
-		var e = src.children[0];
+		var e = src.getRoot();
 		var url = new URL(uri);
 		url.host = domain;
 		var props = loadProps(e, false);
@@ -86,7 +85,7 @@ class Loader {
 		return ret;
 	}
 
-	static function loadElement(p:Element, e:HtmlNodeElement): Element {
+	static function loadElement(p:Element, e:SrcElement): Element {
 		var ret:Element;
 		var props = loadProps(e);
 		ret = switch (e.name) {
@@ -105,7 +104,7 @@ class Loader {
 		return ret;
 	}
 
-	static function loadProps(e:HtmlNodeElement, tagname=true): Props {
+	static function loadProps(e:SrcElement, tagname=true): Props {
 		var props:Props = {};
 		tagname ? props.set(Element.ELEMENT_TAG, e.name) : null;
 		for (a in e.attributes) {
@@ -114,30 +113,42 @@ class Loader {
 				continue;
 			}
 			var val = a.value;
-			if (key.startsWith(Element.CLASS_PREFIX2)) {
-				key = Element.CLASS_PREFIX + key.substr(Element.CLASS_PREFIX2.length);
-				val == null ? val = '1' : null;
-			} else if (key.startsWith(Element.STYLE_PREFIX2)) {
-				key = Element.STYLE_PREFIX + key.substr(Element.STYLE_PREFIX2.length);
-			} else if (key.startsWith(Element.EVENT_PREFIX2)) {
-				key = Element.EVENT_PREFIX + key.substr(Element.EVENT_PREFIX2.length);
-			} else if (key.startsWith(Element.HANDLER_PREFIX2)) {
-				key = Element.HANDLER_PREFIX + key.substr(Element.HANDLER_PREFIX2.length);
-			} else if (key.startsWith(':')) {
-				key = key.substr(1);
-			} else if (!~/^\w_/.match(key)) {
-				key = Element.ATTRIBUTE_PREFIX + key;
-			}
-			props.set(key, val);
+			key.startsWith(Element.CLASS_PFX2) && val == null
+					? val = '1'
+					: null;
+			key = getKey(key);
+			key != null ? props.set(key, val) : null;
 		}
 		return props;
 	}
 
-	static function loadChildren(p:Element, e:HtmlNodeElement) {
+	static function getKey(key:String): String {
+		var ret = key;
+		if (key.startsWith(Element.CLASS_PFX2)) {
+			key = Element.CLASS_PFX + key.substr(Element.CLASS_PFX2.length);
+		} else if (key.startsWith(Element.STYLE_PFX2)) {
+			key = Element.STYLE_PFX + key.substr(Element.STYLE_PFX2.length);
+		} else if (key.startsWith(Element.EVENT_PFX2)) {
+			key = Element.EVENT_PFX + key.substr(Element.EVENT_PFX2.length);
+		} else if (key.startsWith(Element.HANDLER_PFX2)) {
+			key = Element.HANDLER_PFX + key.substr(Element.HANDLER_PFX2.length);
+		} else if (key.startsWith('::')) {
+			key = null;
+		} else if (key.startsWith(':')) {
+			key = key.substr(1);
+		} else if (!~/^\w_/.match(key)) {
+			key = Element.ATTRIBUTE_PFX + key;
+		} else {
+			//TODO error logging
+		}
+		return key;
+	}
+
+	static function loadChildren(p:Element, e:SrcElement) {
 		for (n in e.nodes) {
-			if (Std.is(n, HtmlNodeElement)) {
+			if (Std.is(n, SrcElement)) {
 				loadElement(p, untyped n);
-			} else if (Std.is(n, HtmlNodeText)) {
+			} else if (Std.is(n, SrcText)) {
 				if (StringTools.startsWith(untyped n.text, HIDDEN_COMMENT)/* &&
 					StringTools.endsWith(untyped n.text, '-->')*/) {
 					// nop
@@ -148,7 +159,7 @@ class Loader {
 		}
 	}
 
-	static function loadText(p:Element, n:HtmlNodeText): Text {
+	static function loadText(p:Element, n:SrcText): Text {
 		var ret = new Text(p, n.text);
 		return ret;
 	}

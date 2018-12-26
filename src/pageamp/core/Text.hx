@@ -8,7 +8,7 @@ import pageamp.util.BaseNode;
 using pageamp.web.DomTools;
 
 class Text extends Node {
-	public static inline var TEXT_PROP = Node.NODE_PREFIX + 'text';
+	public static inline var TEXT_PROP = Node.NODE_PFX + 'text';
 	public var value(default,null): Value;
 	public var text(default,null): String;
 
@@ -26,7 +26,7 @@ class Text extends Node {
 			if (parentWithNonNullProp(Element.FOREACH_PROP) == null) {
 				var scope = getScope();
 				if (scope != null) {
-					value = scope.set(Node.NODE_PREFIX + root.nextId(), text);
+					value = scope.set(Node.NODE_PFX + root.nextId(), text);
 					value.cb = textValueCB;
 				}
 			}

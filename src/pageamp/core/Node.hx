@@ -36,9 +36,9 @@ using pageamp.util.PropertyTool;
 * Common abstract superclass for ubimate.core package.
 **/
 class Node extends BaseNode {
-	public static inline var NODE_PREFIX = 'n_';
-	public static inline var NODE_PLUG = NODE_PREFIX + 'plug';
-	public static inline var NODE_INDEX = NODE_PREFIX + 'index';
+	public static inline var NODE_PFX = 'n_';
+	public static inline var NODE_PLUG = NODE_PFX + 'plug';
+	public static inline var NODE_INDEX = NODE_PFX + 'index';
 	public var id: Int;
 	public var props: Props;
 	public var root(get,null): Root;

@@ -22,8 +22,8 @@
 
 package pageamp;
 
+import pageamp.server.SrcParser;
 import haxe.io.Path;
-import htmlparser.HtmlDocument;
 import pageamp.core.Page;
 import pageamp.server.Loader;
 import pageamp.server.Output;
@@ -145,7 +145,7 @@ class Server {
 	                        uri:String,
 	                        params:Map<String,String>): Page {
 		var ret:Page = null;
-		var src:HtmlDocument = null;
+		var src:SrcDocument = null;
 		//uri = uri.replace('%20', ' ');
 		Log.server('outputPage($root, $uri)');
 		try {

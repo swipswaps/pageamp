@@ -22,14 +22,14 @@ class PageTest extends TestCase {
 
 	function testPage2() {
 		var props = PropertyTool.set(null, Page.PAGE_LANG, 'en');
-		props.set(Element.ATTRIBUTE_PREFIX + 'class', 'app');
+		props.set(Element.ATTRIBUTE_PFX + 'class', 'app');
 		var p = new Page(TestAll.getDoc(), props);
 		assertEquals('<html lang="en"><head></head>'
 		+ '<body class="app"></body></html>', p.doc.domToString());
 		p.set(Page.PAGE_LANG, 'es');
 		assertEquals('<html lang="es"><head></head>'
 		+ '<body class="app"></body></html>', p.doc.domToString());
-		p.set(Element.ATTRIBUTE_PREFIX + 'class', 'demo');
+		p.set(Element.ATTRIBUTE_PFX + 'class', 'demo');
 		assertEquals('<html lang="es"><head></head>'
 		+ '<body class="demo"></body></html>', p.doc.domToString());
 		p.set(Page.PAGE_LANG, null);
@@ -44,7 +44,7 @@ class PageTest extends TestCase {
 		p.set(Page.PAGE_LANG, 'es');
 		assertEquals('<html lang="es"><head></head>'
 		+ '<body></body></html>', p.doc.domToString());
-		p.set(Element.ATTRIBUTE_PREFIX + 'class', 'demo');
+		p.set(Element.ATTRIBUTE_PFX + 'class', 'demo');
 		assertEquals('<html lang="es"><head></head>'
 		+ '<body class="demo"></body></html>', p.doc.domToString());
 	}
