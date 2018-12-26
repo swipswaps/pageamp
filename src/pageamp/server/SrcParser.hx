@@ -75,52 +75,6 @@ class SrcParser extends HtmlParser {
 		super();
 	}
 
-	public function getPos(n:Dynamic, type=NODE_POS): SrcPos {
-		var ret:SrcPos = null;
-		if (Std.is(n, SrcElement)) {
-			ret = cast getPosition(n.i);
-		} else if (Std.is(n, SrcText)) {
-			var i = cast(n, SrcText).i;
-			var m1 = i > 0 ? matches[i - 1] : null;
-			var p1 = i > 0 ? getPosition(i - 1) : {line:1, length:0, column:1};
-			var m2 = matches[i];
-			var p2 = getPosition(i);
-			var line = p1.line;
-			var column = p1.column;
-			var j = 0;
-			while (j < p1.length) {
-				var chars = j + 1 < m1.all.length
-						? m1.all.substring(j, j + 2)
-						: m1.all.charAt(j);
-				if (chars == "\r\n") {
-					j += 2; line++; column = 1;
-				} else if (chars.charAt(0) == "\n" || chars.charAt(0) == "\r") {
-					j++; line++; column = 1;
-				} else {
-					j++; column++;
-				}
-			}
-			ret = {
-				line: line,
-				column: column,
-				length: m2.allPos - (m1 != null ? m1.allPos + m1.all.length: 0)
-			};
-		} else if (Std.is(n, SrcAttribute)) {
-			var a:SrcAttribute = cast n;
-			var m = matches[a.e.i];
-			var i0 = m.allPos;
-			var re = new EReg(HtmlParser.reElementOpen, 'ig');
-			if (re.matchSub(str, m.allPos)) {
-				i0 += re.matched(0).length;
-			}
-			ret = updatePos(i0 + a.p.pos);
-		} else {
-			ret = {line:1, length:0, column:1};
-		}
-		ret != null ? ret.pathname = pathname : null;
-		return ret;
-	}
-
 	// =========================================================================
 	// private
 	// =========================================================================
@@ -134,7 +88,8 @@ class SrcParser extends HtmlParser {
 				: 0;
 		var curStart = matches[i].allPos;
 		if (prevEnd < curStart) {
-			nodes.push(new SrcText(str.substr(prevEnd, curStart - prevEnd), i));
+			nodes.push(new SrcText(str.substr(prevEnd, curStart - prevEnd),
+					this, i));
 		}
 		while (i < matches.length) {
 			var m = matches[i];
@@ -146,11 +101,11 @@ class SrcParser extends HtmlParser {
 				};
 			} else if (m.script != null && m.script != "") {
 				var scriptNode = newElement("script", procAttrs(m.scriptAttrs));
-				scriptNode.addChild(new SrcText(m.scriptText, i));
+				scriptNode.addChild(new SrcText(m.scriptText, this, i));
 				nodes.push(scriptNode);
 			} else if (m.style != null && m.style != "") {
 				var styleNode = newElement("style", procAttrs(m.styleAttrs));
-				styleNode.addChild(new SrcText(m.styleText, i));
+				styleNode.addChild(new SrcText(m.styleText, this, i));
 				nodes.push(styleNode);
 			} else if (m.close != null && m.close != "") {
 				if (m.tagCloseLC == openedTagsLC[openedTagsLC.length - 1]) break;
@@ -163,7 +118,7 @@ class SrcParser extends HtmlParser {
 							getPosition(i));
 				}
 			} else if (m.comment != null && m.comment != "") {
-				nodes.push(new SrcText(m.comment, i));
+				nodes.push(new SrcText(m.comment, this, i));
 			} else {
 				throw new HtmlParserException("Unexpected XML node.",
 											  getPosition(i));
@@ -175,7 +130,7 @@ class SrcParser extends HtmlParser {
 					: str.length;
 			if (curEnd < nextStart) {
 				nodes.push(new SrcText(str.substr(curEnd, nextStart - curEnd),
-									   i));
+									   this, i));
 			}
 			i++;
 		}
@@ -218,7 +173,7 @@ class SrcParser extends HtmlParser {
 
 	override function newElement(name:String,
 	                             attrs:Array<HtmlAttribute>): HtmlNodeElement {
-		return new SrcElement(name, attrs, i);
+		return new SrcElement(name, attrs, this, i);
 	}
 
 	function procAttrs(str:String): Array<HtmlAttribute> {
@@ -285,17 +240,20 @@ class SrcDocument extends HtmlDocument {
 		}
 	}
 
-	public function getPos(n:Dynamic, type=SrcParser.NODE_POS): SrcPos {
-		return (parser != null ? parser.getPos(n, type) : null);
+	public inline function getRoot(): SrcElement {
+		return cast children[0];
 	}
 
 }
 
 class SrcElement extends HtmlNodeElement {
+	public var p(default,null): SrcParser;
 	public var i(default,null): Int;
 
 	@:access(pageamp.server.SrcAttribute)
-	public function new(name:String, attributes:Array<HtmlAttribute>, i:Int) {
+	public function new(name:String, attributes:Array<HtmlAttribute>,
+	                    p:SrcParser, i:Int) {
+		this.p = p;
 		this.i = i;
 		super(name, attributes);
 		var srcAtts:Array<SrcAttribute> = cast attributes;
@@ -304,14 +262,63 @@ class SrcElement extends HtmlNodeElement {
 		}
 	}
 
+	public inline function nthElement(index:Int): SrcElement {
+		return cast children[index];
+	}
+
+	public inline function nthNode(index:Int): SrcText {
+		return cast nodes[index];
+	}
+
+	public inline function nthAttribute(index:Int): SrcAttribute {
+		return cast attributes[index];
+	}
+
+	@:access(pageamp.server.SrcParser)
+	public function getPos(): SrcPos {
+		var ret:SrcPos = cast p.getPosition(i);
+		ret.pathname = p.pathname;
+		return ret;
+	}
+
 }
 
 class SrcText extends HtmlNodeText {
+	public var p(default,null): SrcParser;
 	public var i(default,null): Int;
 
-	public function new(text:String, i:Int) {
+	public function new(text:String, p:SrcParser, i:Int) {
+		this.p = p;
 		this.i = i;
 		super(text);
+	}
+
+	@:access(pageamp.server.SrcParser)
+	public function getPos(): SrcPos {
+		var m1 = i > 0 ? p.matches[i - 1] : null;
+		var p1 = i > 0 ? p.getPosition(i - 1) : {line:1, length:0, column:1};
+		var m2 = p.matches[i];
+		var p2 = p.getPosition(i);
+		var line = p1.line;
+		var column = p1.column;
+		var j = 0;
+		while (j < p1.length) {
+			var chars = j + 1 < m1.all.length
+			? m1.all.substring(j, j + 2)
+			: m1.all.charAt(j);
+			if (chars == "\r\n") {
+				j += 2; line++; column = 1;
+			} else if (chars.charAt(0) == "\n" || chars.charAt(0) == "\r") {
+				j++; line++; column = 1;
+			} else {
+				j++; column++;
+			}
+		}
+		return {
+			line: line,
+			column: column,
+			length: m2.allPos - (m1 != null ? m1.allPos + m1.all.length: 0)
+		};
 	}
 
 }
@@ -323,6 +330,17 @@ class SrcAttribute extends HtmlAttribute {
 	public function new(name:String, value:String, quote:String, p:AttrPos) {
 		this.p = p;
 		super(name, value, quote);
+	}
+
+	@:access(pageamp.server.SrcParser, htmlparser.HtmlParser)
+	public function getPos(): SrcPos {
+		var m = e.p.matches[e.i];
+		var i0 = m.allPos;
+		var re = new EReg(HtmlParser.reElementOpen, 'ig');
+		if (re.matchSub(e.p.str, m.allPos)) {
+			i0 += re.matched(0).length;
+		}
+		return e.p.updatePos(i0 + p.pos);
 	}
 
 }
