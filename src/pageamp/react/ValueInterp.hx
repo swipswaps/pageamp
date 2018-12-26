@@ -147,8 +147,8 @@ class ValueInterp extends Interp {
 		}
 		return v;
 	}
-    
-	override function increment( e : Expr, prefix : Bool, delta : Int ) : Dynamic {
+
+	override function increment(e:Expr, prefix:Bool, delta:Int): Dynamic {
 		#if hscriptPos
 		curExpr = e;
 		var e = e.e;
@@ -164,7 +164,7 @@ class ValueInterp extends Interp {
 // 				if( l == null ) variables.set(id,v + delta) else l.r = v + delta;
 // 			return v;
 			var v = resolve(id);
-			//TODO: test preincrement/postincrement
+			//FIXME: test preincrement/postincrement
 			var ret = (prefix ? (v + delta) : v);
 			_resolveWrite(id, v + delta);
 			return v;

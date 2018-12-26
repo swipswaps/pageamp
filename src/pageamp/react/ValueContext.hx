@@ -22,6 +22,9 @@
 
 package pageamp.react;
 
+import hscript.Parser;
+import hscript.Expr;
+
 class ValueContext {
 	public static inline var DID_UPDATE_EVENT = 1;
 	public static inline var UID_PREFIX = '__uid__';
@@ -43,6 +46,16 @@ class ValueContext {
 	public function dispose(): ValueContext {
 		// nop
 		return null;
+	}
+
+	public function parseString(code:String): Expr {
+		var ret:Expr = null;
+		try {
+			ret = parser.parseString(code);
+		} catch (ex:Dynamic) {
+			Log.value('new(): $ex');
+		}
+		return ret;
 	}
 
 	#if !debug inline #end
@@ -116,7 +129,8 @@ class ValueContext {
 		scopeUidCount = uidCount = 0;
 		if (interp == null) {
 			var id = newScopeUid();
-			interp = new ValueInterp(new ValueScope(this, null, id, null, owner));
+			interp = new ValueInterp(
+					new ValueScope(this, null, id, null, owner));
 		} else {
 			interp.reset();
 		}
@@ -162,6 +176,7 @@ class ValueContext {
 	// =========================================================================
 	// private
 	// =========================================================================
+	static var parser = new Parser();
 	var pushNesting: Int;
 
 	#if !debug inline #end

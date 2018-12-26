@@ -73,13 +73,14 @@ class Element extends Node {
 		return dom;
 	}
 
-	override public function cloneTo(parent:Node, nesting:Int, ?index:Int): Node {
+	override
+	public function cloneTo(parent:Node, nesting:Int, ?index:Int): Node {
 		var props = this.props.clone();
 		props = props.set(Node.NODE_INDEX, index);
 		props.remove(NAME_PROP);
 		//props.remove(Node.NODE_INDEX);
 		nesting < 1 ? props.remove(FOREACH_PROP) : null;
-		// ensure the clone's data system is initialized so it has its own data ctx
+		// ensure clone's data system is initialized so it has its own data ctx
 		if (!props.exists(DATAPATH_PROP) && !props.exists(FOREACH_PROP)) {
 			props.set2(DATAPATH_PROP, null);
 		}

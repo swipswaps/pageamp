@@ -296,7 +296,10 @@ class ValueScope {
 		return (ret != null ? ret : defval);
 	}
 
-	public function delayedSet(key:String, val:Dynamic, secs=.0, ?cb:Void->Void) {
+	public function delayedSet(key:String,
+	                           val:Dynamic,
+	                           secs=.0,
+	                           ?cb:Void->Void) {
 #if server
 		var value:Value = values.get(key);
 		if (value != null) {

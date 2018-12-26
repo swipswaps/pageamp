@@ -84,22 +84,13 @@ class Value extends DoubleLinkedItem {
 				body = ValueParser.unpatchLF(body);
 				Log.value('new(): parsed function: [$on] ($args) -> {$body}');
 				var keys = ~/\s*,\s*/.split(StringTools.trim(args));
-				var e = null;
-				try {
-					e = parser.parseString(body);
-				} catch (ex:Dynamic) {
-					Log.value('new(): $ex');
-				}
+				var e = scope.context.parseString(body);
 				if (e != null) {
 					on == 'undefined' ? on = null : null;
 					if (on != null) {
 						// handler
 						//this.source = "${" + on + "}";
-						try {
-							exp = parser.parseString(on);
-						} catch (ex:Dynamic) {
-							Log.value('new(): $ex');
-						}
+						exp = scope.context.parseString(on);
 						cb = function(u:Dynamic, k:String, v:Dynamic) {
 							Log.value('parsed handler activated with ' + v);
 							var locals = new Map<String,Dynamic>();
@@ -110,13 +101,15 @@ class Value extends DoubleLinkedItem {
 						}
 					} else {
 						// method
-						this.value = Reflect.makeVarArgs(function(v:Array<Dynamic>) {
+						this.value = Reflect.makeVarArgs(
+									function(v:Array<Dynamic>) {
 							var loc = new Map<String,Dynamic>();
 							var count = 0, len = v.length;
 							for (key in keys) {
 								loc.set(key, (count < len ? v[count++] : null));
 							}
-							var res = scope.context.interp.evaluateWith(e, scope, loc);
+							var res = scope.context.interp.evaluateWith(e,
+									scope, loc);
 							Log.value('parsed function result: $res');
 							return res;
 						});
@@ -127,16 +120,10 @@ class Value extends DoubleLinkedItem {
 				try {
 					ValueParser.parse(value, sb);
 					Log.value('new(): parsed expression: ${sb.toString()}');
-					exp = parser.parseString(sb.toString());
-					// Log.value('new(): compiled: $exp');
-					// #if (debug && logValue)
-					//     var s = new haxe.Serializer();
-					//     s.serialize(exp);
-					//     Log.value('new(): serialized: ${s.toString()}');
-					// #end
 				} catch (ex:Dynamic) {
 					Log.value('new(): $ex');
 				}
+				exp = scope.context.parseString(sb.toString());
 			}
 		} else {
 			this.value = value;
@@ -215,10 +202,10 @@ class Value extends DoubleLinkedItem {
 			if (isDynamic()) {
 				if (scope.context.isRefreshing) {
 					//
-					// By executing our expression, we might call other
-					// values' get() methods: by pushing ourselves onto the stack
-					// they can trace us as dependent on them and add us to their
-					// list of observers (they "pull" our dependency).
+					// By executing our expression, we might call the `get()`
+					// method of other values: by pushing ourselves onto the
+					// stack they can trace us as dependent on them and add us
+					// to their list of observers (they "pull" our dependency).
 					//
 					// Outside of refresh cycles, observers are notified by the
 					// set() method when a value changes, thus propagating the
@@ -258,7 +245,6 @@ class Value extends DoubleLinkedItem {
 	// =========================================================================
 	// public static
 	// =========================================================================
-	public static var parser = new Parser();
 
 	#if !debug inline #end
 	public static function isConstantExpression(s:String): Bool {
@@ -273,7 +259,6 @@ class Value extends DoubleLinkedItem {
 
 	function _set(v:Dynamic): Bool {
 		if (v != value || first) {
-//			trace('${untyped scope.owner.e.className}.$name._set($v)');//tempdebug
 			prevValue = value;
 			value = v;
 			first = false;

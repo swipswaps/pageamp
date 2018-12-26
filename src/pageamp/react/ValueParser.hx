@@ -26,7 +26,8 @@ package pageamp.react;
 class ValueParser {
 	static public inline var LF_PLACEHOLDER = '__LINEFEED__';
 	//NOTE not thread safe:
-	static public var FUNCTION_RE = ~/^\${(\((.*?)\):)?function\((.*?)\)\s*{\s*(.*?)\s*}\s*}$/;
+	static public var FUNCTION_RE =
+			~/^\${(\((.*?)\):)?function\((.*?)\)\s*{\s*(.*?)\s*}\s*}$/;
 	static public var USE_STRING_FUNCTION = true;
 	static var EXP_MARKER_START = "$";
 	static var EXP_MARKER1 = "$"+"{";
@@ -80,7 +81,8 @@ class ValueParser {
 				}
 			}
 
-			var tostring = op == EXP_MARKER1_CODE && (sep!='' || i2 < (s.length - 1));
+			var tostring = (op == EXP_MARKER1_CODE
+							&& (sep!='' || i2 < (s.length - 1)));
 			sb.add(sep); sep="+"; sb.add("(");
 			var code = StringTools.trim(s.substring(i3, i2));
 
