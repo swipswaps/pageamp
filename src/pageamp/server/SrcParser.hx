@@ -176,6 +176,25 @@ class SrcParser extends HtmlParser {
 		return new SrcElement(name, attrs, this, i);
 	}
 
+	override function getPosition(matchIndex:Int): {
+		line:Int, column:Int, length:Int
+	} {
+		var m = matches[matchIndex];
+		var line = 1;
+		var column = 1;
+		var i = 0; while (i < m.allPos) {
+			var chars = i + 1 < str.length ? str.substring(i, i + 2) : str.charAt(i);
+			if (chars == "\r\n") {
+				i += 2; line++; column = 1;
+			} else if (chars.charAt(0) == "\n" || chars.charAt(0) == "\r") {
+				i++; line++; column = 1;
+			} else {
+				i++; column++;
+			}
+		}
+		return {line:line, column:column, length:m.all.length};
+	}
+
 	function procAttrs(str:String): Array<HtmlAttribute> {
 		var attributes = new Array<HtmlAttribute>();
 		var pos = 0;
@@ -201,7 +220,8 @@ class SrcParser extends HtmlParser {
 	}
 
 	function updatePos(i:Int, i0=0, ?p:SrcPos): SrcPos {
-		p == null ? p = {line:1, column:1, length:0, pathname:pathname} : null;
+		p == null ? p = {line:1, column:1, length:0} : null;
+		p.pathname = pathname;
 		while (i0 < i) {
 			var chars = i0 + 1 < str.length
 					? str.substring(i0, i0 + 2)
@@ -294,7 +314,7 @@ class SrcText extends HtmlNodeText {
 	}
 
 	@:access(pageamp.server.SrcParser)
-	public function getPos(): SrcPos {
+	public function getPos(offset=0): SrcPos {
 		var m1 = i > 0 ? p.matches[i - 1] : null;
 		var p1 = i > 0 ? p.getPosition(i - 1) : {line:1, length:0, column:1};
 		var m2 = p.matches[i];
@@ -304,8 +324,8 @@ class SrcText extends HtmlNodeText {
 		var j = 0;
 		while (j < p1.length) {
 			var chars = j + 1 < m1.all.length
-			? m1.all.substring(j, j + 2)
-			: m1.all.charAt(j);
+					? m1.all.substring(j, j + 2)
+					: m1.all.charAt(j);
 			if (chars == "\r\n") {
 				j += 2; line++; column = 1;
 			} else if (chars.charAt(0) == "\n" || chars.charAt(0) == "\r") {
@@ -314,11 +334,18 @@ class SrcText extends HtmlNodeText {
 				j++; column++;
 			}
 		}
-		return {
+		var ret = {
 			line: line,
 			column: column,
-			length: m2.allPos - (m1 != null ? m1.allPos + m1.all.length: 0)
+			length: m2.allPos - (m1 != null ? m1.allPos + m1.all.length: 0),
+			pathname: p.pathname
 		};
+		if (offset > 0) {
+			var i = m1.allPos + p1.length;
+			p.updatePos(i + offset, i, ret);
+			ret.length -= offset;
+		}
+		return ret;
 	}
 
 }
@@ -332,15 +359,32 @@ class SrcAttribute extends HtmlAttribute {
 		super(name, value, quote);
 	}
 
+	/**
+	* `offset` == null: attribute name pos
+	* `offset` >= 0: attribute value pos
+	**/
 	@:access(pageamp.server.SrcParser, htmlparser.HtmlParser)
-	public function getPos(): SrcPos {
+	public function getPos(?offset:Int): SrcPos {
 		var m = e.p.matches[e.i];
 		var i0 = m.allPos;
 		var re = new EReg(HtmlParser.reElementOpen, 'ig');
 		if (re.matchSub(e.p.str, m.allPos)) {
 			i0 += re.matched(0).length;
 		}
-		return e.p.updatePos(i0 + p.pos);
+		var ret = e.p.updatePos(i0 + p.pos);
+		ret.length = p.len;
+		if (offset != null) {
+			var re = ~/["']/;
+			if (re.matchSub(e.p.str, i0 + p.pos, p.len)) {
+				var i = re.matchedPos().pos;
+				ret = e.p.updatePos(i + 1 + offset);
+				ret.length = i0 + p.pos + p.len - 2 - i - offset;
+			} else {
+				ret.column += name.length;
+				ret.length = 0;
+			}
+		}
+		return ret;
 	}
 
 }
