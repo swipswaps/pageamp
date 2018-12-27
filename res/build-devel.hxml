@@ -16,4 +16,5 @@
 -php ../www/.pageamp/php
 -main pageamp.Server
 -lib HtmlParser
+-D hscriptPos
 -D server

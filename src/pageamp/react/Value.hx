@@ -72,6 +72,14 @@ class Value extends DoubleLinkedItem {
 		this.valueFn = valueFn;
 		source = null;
 		exp = null;
+		cycle = 0;
+		var ref:ValueRef = null;
+#if hscriptPos
+		if (Std.is(value, ValueRef)) {
+			ref = untyped value;
+			value = ref.val;
+		}
+#end
 		if (Std.is(value, String) && !ValueParser.isConstantExpression(value)) {
 			this.source = value;
 			var s = ValueParser.patchLF(value);
@@ -84,13 +92,13 @@ class Value extends DoubleLinkedItem {
 				body = ValueParser.unpatchLF(body);
 				Log.value('new(): parsed function: [$on] ($args) -> {$body}');
 				var keys = ~/\s*,\s*/.split(StringTools.trim(args));
-				var e = scope.context.parseString(body);
+				var e = parseString(body, ref);
 				if (e != null) {
 					on == 'undefined' ? on = null : null;
 					if (on != null) {
 						// handler
 						//this.source = "${" + on + "}";
-						exp = scope.context.parseString(on);
+						exp = parseString(on, ref);
 						cb = function(u:Dynamic, k:String, v:Dynamic) {
 							Log.value('parsed handler activated with ' + v);
 							var locals = new Map<String,Dynamic>();
@@ -123,13 +131,27 @@ class Value extends DoubleLinkedItem {
 				} catch (ex:Dynamic) {
 					Log.value('new(): $ex');
 				}
-				exp = scope.context.parseString(sb.toString());
+				exp = parseString(sb.toString(), ref);
 			}
 		} else {
 			this.value = value;
 		}
-		cycle = 0;
 		this.cb = (callOnNull ? cb : function(u,n,v) if (v != null) cb(u,n,v));
+	}
+
+	function parseString(code:String, ref:ValueRef): Expr {
+		var ret:Expr = null;
+		try {
+			ret = scope.context.parseString(code);
+		} catch (ex:Dynamic) {
+#if hscriptPos
+			if (ref != null && Std.is(ex, Error)) {
+				ref.log(cast ex, ref);
+			}
+#end
+			Log.value('parseString() [$code]: $ex');
+		}
+		return ret;
 	}
 
 	public function dispose(): Value {
@@ -247,7 +269,7 @@ class Value extends DoubleLinkedItem {
 	// =========================================================================
 
 	#if !debug inline #end
-	public static function isConstantExpression(s:String): Bool {
+	public static function isConstantExpression(s:Dynamic): Bool {
 		return ValueParser.isConstantExpression(s);
 	}
 
@@ -285,3 +307,21 @@ class Value extends DoubleLinkedItem {
 	}
 
 }
+
+#if hscriptPos
+typedef ValueLog = Error->ValueRef->Void;
+class ValueRef {
+	public var val(default,null): Dynamic;
+	public var src(default,null): Dynamic;
+	public var log(default,null): ValueLog;
+
+	public function new(val:Dynamic, src:Dynamic, log:ValueLog) {
+		this.val = val;
+		this.src = src;
+		this.log = log;
+	}
+}
+#else
+typedef ValueLog = Dynamic;
+typedef ValueRef = Dynamic;
+#end

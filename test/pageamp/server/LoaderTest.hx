@@ -22,6 +22,7 @@
 
 package pageamp.server;
 
+import hscript.Expr;
 import haxe.unit.TestCase;
 import htmlparser.HtmlDocument;
 import pageamp.server.Loader;
@@ -131,6 +132,18 @@ class LoaderTest extends TestCase {
 		var out = dst.domToString();
 		assertEquals('<html><head></head>'
 		+ '<body id="1"><div>Foo</div></body></html>', out);
+	}
+
+	function testScriptError1() {
+		var src = new SrcDocument('<html><head></head>\n'
+		+ '<body data-x="$'+'{1 + \'a}"/></html>');
+		var dst = TestAll.getDoc();
+		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/',
+		cast function(err:Error, attr:SrcAttribute) {
+			var pos = attr.getPos();
+			trace('testScriptError1(): ' + err);
+		});
+		assertTrue(true);
 	}
 
 }

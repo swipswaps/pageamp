@@ -22,12 +22,15 @@
 
 package pageamp.server;
 
+import pageamp.react.Value;
 import pageamp.core.*;
 import pageamp.server.SrcParser;
 import pageamp.util.PropertyTool.Props;
 import pageamp.web.DomTools;
 import pageamp.web.URL;
-
+#if hscriptPos
+import pageamp.react.ValueParser;
+#end
 using StringTools;
 using pageamp.util.PropertyTool;
 using pageamp.web.DomTools;
@@ -41,17 +44,20 @@ class Loader {
 	                                dst:DomDocument,
 	                                rootpath:String,
 	                                domain:String,
-	                                uri:String): Page {
+	                                uri:String,
+	                                ?logger:ValueLog): Page {
 		dst == null ? dst = DomTools.defaultDocument() : null;
-		var ret = loadRoot(dst, src, rootpath, domain, uri);
+		var ret = loadRoot(dst, src, rootpath, domain, uri, logger);
 		return ret;
 	}
 
-	public static function loadPage2(text:String, ?dst:DomDocument): Page {
+	public static function loadPage2(text:String,
+	                                 ?dst:DomDocument,
+	                                 ?logger:ValueLog): Page {
 //		text = normalizeText(text);
 		var src = SrcParser.parseDoc(text);
 		dst == null ? dst = DomTools.defaultDocument() : null;
-		var ret = loadRoot(dst, src, null, null, null);
+		var ret = loadRoot(dst, src, null, null, '/', logger);
 		return ret;
 	}
 
@@ -72,22 +78,25 @@ class Loader {
 	                         src:SrcDocument,
 	                         rootpath:String,
 	                         domain:String,
-	                         uri='/'): Page {
+	                         uri,
+	                         logger:ValueLog): Page {
 		var e = src.getRoot();
 		var url = new URL(uri);
 		url.host = domain;
-		var props = loadProps(e, false);
+		var props = loadProps(e, false, logger);
 		props.set(Page.FSPATH_PROP, rootpath);
 		props.set(Page.URI_PROP, url.toString());
 		var ret = new Page(doc, props, function(p:Page) {
-			loadChildren(p, e);
+			loadChildren(p, e, logger);
 		});
 		return ret;
 	}
 
-	static function loadElement(p:Element, e:SrcElement): Element {
+	static function loadElement(p:Element,
+	                            e:SrcElement,
+	                            logger:ValueLog): Element {
 		var ret:Element;
-		var props = loadProps(e);
+		var props = loadProps(e, true, logger);
 		ret = switch (e.name) {
 			case 'head':
 				new Head(p, props);
@@ -100,11 +109,13 @@ class Loader {
 			default:
 				new Element(p, props);
 		}
-		loadChildren(ret, e);
+		loadChildren(ret, e, logger);
 		return ret;
 	}
 
-	static function loadProps(e:SrcElement, tagname=true): Props {
+	static function loadProps(e:SrcElement,
+	                          tagname:Bool,
+	                          logger:ValueLog): Props {
 		var props:Props = {};
 		tagname ? props.set(Element.ELEMENT_TAG, e.name) : null;
 		for (a in e.attributes) {
@@ -112,12 +123,18 @@ class Loader {
 			if (key.startsWith(HIDDEN_ATTR)) {
 				continue;
 			}
-			var val = a.value;
+			var val:Dynamic = a.value;
 			key.startsWith(Element.CLASS_PFX2) && val == null
 					? val = '1'
 					: null;
-			key = getKey(key);
-			key != null ? props.set(key, val) : null;
+			if ((key = getKey(key)) != null) {
+#if hscriptPos
+				if (logger != null && !ValueParser.isConstantExpression(val)) {
+					val = new ValueRef(val, a, logger);
+				}
+#end
+				props.set(key, val);
+			}
 		}
 		return props;
 	}
@@ -144,10 +161,10 @@ class Loader {
 		return key;
 	}
 
-	static function loadChildren(p:Element, e:SrcElement) {
+	static function loadChildren(p:Element, e:SrcElement, logger:ValueLog) {
 		for (n in e.nodes) {
 			if (Std.is(n, SrcElement)) {
-				loadElement(p, untyped n);
+				loadElement(p, untyped n, logger);
 			} else if (Std.is(n, SrcText)) {
 				if (StringTools.startsWith(untyped n.text, HIDDEN_COMMENT)/* &&
 					StringTools.endsWith(untyped n.text, '-->')*/) {

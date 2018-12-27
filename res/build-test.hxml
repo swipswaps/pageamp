@@ -9,6 +9,7 @@
 -main pageamp.TestAll
 -lib htmlparser
 -lib hscript
+-D hscriptPos
 -D client
 -debug
 -D source-map-content
@@ -23,4 +24,5 @@
 -main pageamp.TestAll
 -lib htmlparser
 -lib hscript
+-D hscriptPos
 -D server

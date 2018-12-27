@@ -1,0 +1,20 @@
+-cp ext
+-cp src
+-cp test
+-lib hscript
+--each
+
+#--next
+#-js ../www/.pageamp/client/bin/pageamp.js
+#-main pageamp.Client
+#-lib feffects
+#-D client
+#-debug
+#-D source-map-content
+
+--next
+-php ../www/.pageamp/php
+-main pageamp.Server
+-lib HtmlParser
+-D hscriptPos
+-D server

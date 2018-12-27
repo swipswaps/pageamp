@@ -11,6 +11,10 @@ import pageamp.util.BaseNode;
 	import js.html.Window;
 	import js.html.ResizeObserver;
 #end
+#if hscriptPos
+	import pageamp.server.SrcParser;
+	import hscript.Expr;
+#end
 
 using StringTools;
 using pageamp.util.PropertyTool;

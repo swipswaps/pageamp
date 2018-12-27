@@ -148,8 +148,7 @@ class Node extends BaseNode {
 
 	function isDynamicValue(k:String, v:Dynamic) {
 		return v != null
-			&& Std.is(v, String)
-			&& !Value.isConstantExpression(untyped v);
+			&& !Value.isConstantExpression(v);
 	}
 
 	function parentWithNonNullProp(key:String): Node {

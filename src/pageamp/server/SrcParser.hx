@@ -22,6 +22,7 @@
 
 package pageamp.server;
 
+import hscript.Expr;
 import htmlparser.HtmlParser;
 import htmlparser.HtmlParser;
 import pageamp.server.SrcParser;
@@ -73,6 +74,10 @@ class SrcParser extends HtmlParser {
 	public function new(?pathname:String) {
 		this.pathname = pathname;
 		super();
+	}
+
+	public static function valueLogger(err:Error, attr:Dynamic) {
+		var a:SrcAttribute = cast attr;
 	}
 
 	// =========================================================================

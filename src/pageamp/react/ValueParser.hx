@@ -23,6 +23,7 @@
 package pageamp.react;
 
 //TODO strip line and block comments from expression
+import pageamp.react.Value.ValueRef;
 class ValueParser {
 	static public inline var LF_PLACEHOLDER = '__LINEFEED__';
 	//NOTE not thread safe:
@@ -37,8 +38,14 @@ class ValueParser {
 	static var EXP_MARKER2 = "}";
 
 	#if !debug inline #end
-	static public function isConstantExpression(val: String) {
-		return (val.indexOf(EXP_MARKER1) < 0 && val.indexOf(DATA_MARKER1) < 0);
+	static public function isConstantExpression(val:Dynamic) {
+		var ret = true;
+		if (Std.is(val, String)) {
+			ret = (val.indexOf(EXP_MARKER1) < 0 && val.indexOf(DATA_MARKER1) < 0);
+		} else if (Std.is(val, ValueRef)) {
+			ret = false;
+		}
+		return ret;
 	}
 
 	static public function parse(s:String, sb:StringBuf): Bool {
