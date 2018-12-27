@@ -22,9 +22,9 @@
 
 package pageamp.server;
 
-import hscript.Expr;
 import haxe.unit.TestCase;
-import htmlparser.HtmlDocument;
+import hscript.Expr;
+import pageamp.react.Value.ValueRef;
 import pageamp.server.Loader;
 import pageamp.server.SrcParser;
 
@@ -135,15 +135,17 @@ class LoaderTest extends TestCase {
 	}
 
 	function testScriptError1() {
-		var src = new SrcDocument('<html><head></head>\n'
-		+ '<body data-x="$'+'{1 + \'a}"/></html>');
+		var src = SrcParser.parseDoc('<html><head></head>\n'
+		+ '<body data-x="$'+'{1 + \'a}"/></html>', 'test');
 		var dst = TestAll.getDoc();
+		var msg = null;
 		var pag = Loader.loadPage(src, dst, '/', 'test.local', '/',
-		cast function(err:Error, attr:SrcAttribute) {
-			var pos = attr.getPos();
-			trace('testScriptError1(): ' + err);
+		cast function(err:Error, ref:ValueRef) {
+			var attr:SrcAttribute = ref.src;
+			var pos = attr.getPos(0);
+			msg = '$pos: $err';
 		});
-		assertTrue(true);
+		assertEquals('test:2: character 15: hscript:1: Unterminated string', msg);
 	}
 
 }

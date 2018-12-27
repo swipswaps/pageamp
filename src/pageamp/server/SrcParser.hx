@@ -118,7 +118,7 @@ class SrcParser extends HtmlParser {
 					if (openedTagsLC.lastIndexOf(m.tagCloseLC) >= 0) break;
 				} else {
 					throw new HtmlParserException("Closed tag <" + m.tagClose
-							+ "> don't match to open tag <"
+							+ "> doesn't match to open tag <"
 							+ openedTagsLC[openedTagsLC.length - 1] + ">.",
 							getPosition(i));
 				}
@@ -188,7 +188,9 @@ class SrcParser extends HtmlParser {
 		var line = 1;
 		var column = 1;
 		var i = 0; while (i < m.allPos) {
-			var chars = i + 1 < str.length ? str.substring(i, i + 2) : str.charAt(i);
+			var chars = i + 1 < str.length
+					? str.substring(i, i + 2)
+					: str.charAt(i);
 			if (chars == "\r\n") {
 				i += 2; line++; column = 1;
 			} else if (chars.charAt(0) == "\n" || chars.charAt(0) == "\r") {
@@ -225,7 +227,7 @@ class SrcParser extends HtmlParser {
 	}
 
 	function updatePos(i:Int, i0=0, ?p:SrcPos): SrcPos {
-		p == null ? p = {line:1, column:1, length:0} : null;
+		p == null ? p = new SrcPos(1, 1, 0) : null;
 		p.pathname = pathname;
 		while (i0 < i) {
 			var chars = i0 + 1 < str.length
@@ -244,8 +246,22 @@ class SrcParser extends HtmlParser {
 
 }
 
-typedef SrcPos = {
-	line: Int, length: Int, column: Int, ?pathname: String,
+class SrcPos {
+	public var line: Int;
+	public var length: Int;
+	public var column: Int;
+	public var pathname: String;
+
+	public function new(line:Int, column:Int, length:Int, ?pathname:String) {
+		this.line = line;
+		this.column = column;
+		this.length = length;
+		this.pathname = pathname;
+	}
+
+	public function toString(): String {
+		return '$pathname:$line: character $column';
+	}
 }
 
 typedef AttrPos = {
@@ -339,12 +355,10 @@ class SrcText extends HtmlNodeText {
 				j++; column++;
 			}
 		}
-		var ret = {
-			line: line,
-			column: column,
-			length: m2.allPos - (m1 != null ? m1.allPos + m1.all.length: 0),
-			pathname: p.pathname
-		};
+		var ret = new SrcPos(line,
+				column,
+				m2.allPos - (m1 != null ? m1.allPos + m1.all.length: 0),
+				p.pathname);
 		if (offset > 0) {
 			var i = m1.allPos + p1.length;
 			p.updatePos(i + offset, i, ret);

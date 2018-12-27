@@ -1,8 +1,7 @@
 package pageamp.server;
 
-import htmlparser.HtmlParser;
-import pageamp.server.SrcParser;
 import haxe.unit.TestCase;
+import pageamp.server.SrcParser;
 
 class SrcParserTest extends TestCase {
 
@@ -12,7 +11,6 @@ class SrcParserTest extends TestCase {
 	}
 
 	function testNodeType1() {
-		var parser = new SrcParser();
 		var doc:SrcDocument = SrcParser.parseDoc('<:tag>some text</:tag>');
 		assertTrue(Std.is(doc, SrcDocument));
 		var root = doc.getRoot();
@@ -22,7 +20,6 @@ class SrcParserTest extends TestCase {
 	}
 
 	function testNodePos1() {
-		var parser = new SrcParser();
 		var doc:SrcDocument = SrcParser.parseDoc('<:tag>some text</:tag>');
 		var root:SrcElement = doc.getRoot();
 		var pos = root.getPos();
@@ -37,7 +34,6 @@ class SrcParserTest extends TestCase {
 	}
 
 	function testNodePos2() {
-		var parser = new SrcParser();
 		var doc:SrcDocument = SrcParser.parseDoc(''
 		+ '<root\n'
 		+ '>    some text\n'
@@ -55,7 +51,6 @@ class SrcParserTest extends TestCase {
 	}
 
 	function testNodePos3() {
-		var parser = new SrcParser();
 		var doc:SrcDocument = SrcParser.parseDoc(''
 		+ '<root a="v1"\n'
 		+ '      b="v22" c/>');
@@ -84,7 +79,6 @@ class SrcParserTest extends TestCase {
 	}
 
 	function testNodePos4() {
-		var parser = new SrcParser();
 		var doc:SrcDocument = SrcParser.parseDoc('<root>\n'
 		+ '<element a="v1"\n'
 		+ '    b="v22" c/>\n'
@@ -109,7 +103,6 @@ class SrcParserTest extends TestCase {
 	}
 
 	function testTextPos1() {
-		var parser = new SrcParser();
 		var doc:SrcDocument = SrcParser.parseDoc('<root>\n'
 		+ '  <element>\n'
 		+ '    a sample text\n'
@@ -130,7 +123,6 @@ class SrcParserTest extends TestCase {
 	}
 
 	function testAttributePos1() {
-		var parser = new SrcParser();
 		var doc:SrcDocument = SrcParser.parseDoc('<root>\n'
 		+ '<element a="v1"\n'
 		+ '    b="v22" c/>\n'
@@ -188,7 +180,6 @@ class SrcParserTest extends TestCase {
 	}
 
 	function testAttributePos2() {
-		var parser = new SrcParser();
 		var doc:SrcDocument = SrcParser.parseDoc('<root>\n'
 		+ '<element a="function() {\n'
 		+ '    a = 2;\n'
