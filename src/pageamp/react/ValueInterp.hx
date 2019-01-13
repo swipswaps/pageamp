@@ -133,9 +133,17 @@ class ValueInterp extends Interp {
 	var resetVars = new Map<String,Dynamic>();
 	var currentScope: ValueScope;
 
+	inline function _edef( e : Expr ) {
+		#if hscriptPos
+		return e.e;
+		#else
+		return e;
+		#end
+	}
+
 	override function assign(e1:Expr, e2:Expr): Dynamic {
 		var v = expr(e2);
-		switch (edef(e1)) {
+		switch (_edef(e1)) {
 		case EIdent(id):
 		    _resolveWrite(id, v);
 		case EField(e,f):

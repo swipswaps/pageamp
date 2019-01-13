@@ -147,12 +147,12 @@ class Server {
 		var ret:Page = null;
 		var src:SrcDocument = null;
 		//uri = uri.replace('%20', ' ');
-		Log.server('outputPage($root, $uri)');
+		Log.server('getPage($root, $uri)');
 		try {
 			var p = new Preprocessor(Web.getCwd());
 			src = p.loadFile(uri);
 		} catch (e:Dynamic) {
-			Log.server('outputPage(): ' + e);
+			Log.server('getPage(): ' + e);
 			if (!uri.endsWith('/')
 				&& FileSystem.exists(root + uri)
 				&& FileSystem.isDirectory(root + uri)) {

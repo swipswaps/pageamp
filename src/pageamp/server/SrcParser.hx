@@ -28,6 +28,11 @@ import htmlparser.HtmlParser;
 import pageamp.server.SrcParser;
 import htmlparser.*;
 
+/**
+* Subclass of HtmlParser which produces SrcElement, SrcAttribute and SrcText
+* objects that know their position in the source file. This is used for error
+* reporting.
+**/
 class SrcParser extends HtmlParser {
 	public static inline var NODE_POS = 0;
 	public static inline var NAME_POS = 1;
