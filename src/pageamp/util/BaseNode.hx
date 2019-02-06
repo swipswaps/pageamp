@@ -29,7 +29,7 @@ class BaseNode {
 	public var logicalParent(default,null): BaseNode;
 	public var baseParent(default,null): BaseNode;
 	public var baseChildren(get,null): Array<BaseNode>;
-	public function get_baseChildren() return _cdn != null ? _cdn : NOCDN;
+	public function get_baseChildren() return _cdn != null ? _cdn : NOCHILDREN;
 	public var before: BaseNode;
 
 	public function new(parent:BaseNode,
@@ -131,7 +131,7 @@ class BaseNode {
 	// =========================================================================
 	// private
 	// =========================================================================
-	static var NOCDN: Array<BaseNode> = [];
+	static var NOCHILDREN: Array<BaseNode> = [];
 	var _cdn: Array<BaseNode>;
 	var baseRoot: BaseNode;
 	var slots: Map<String, BaseNode>;
