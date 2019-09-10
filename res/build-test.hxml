@@ -1,7 +1,7 @@
 
 # client test
 --next
--js ../www/.pageamptest/client/bin/test.js
+-js ../docroot/www/.pageamptest/client/bin/test.js
 -cp ext
 -cp src
 -cp test
@@ -16,7 +16,7 @@
 
 # php test
 --next
--php ../www/.pageamptest/php
+-php ../docroot/www/.pageamptest/php
 -cp ext
 -cp src
 -cp test
