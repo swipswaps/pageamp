@@ -7,7 +7,7 @@
 --each
 
 --next
--js ../docroot/www/.pageamp/client/bin/pageamp.js
+-js ../web2/docroot/.pageamp/client/bin/pageamp.js
 -main pageamp.Client
 -lib feffects
 -D client
@@ -15,6 +15,6 @@
 -D source-map-content
 
 --next
--php ../docroot/www/.pageamp/php
+-php ../web2/docroot/.pageamp/php
 -main pageamp.Server
 -D server
